@@ -27,6 +27,7 @@
       
       {% if current_user.is_authenticated %}
         <form action="/clubs/{{ club.id }}/join" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="btn btn-primary btn-block mt-3 w-100">Join Club</button>
         </form>
       {% else %}

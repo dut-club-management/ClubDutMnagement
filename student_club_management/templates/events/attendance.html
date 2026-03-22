@@ -486,11 +486,24 @@ async function processQRCode(qrData) {
     }
     
     try {
+        // Get CSRF token from meta tag
+        var csrfToken = null;
+        var metaTag = document.querySelector('meta[name=csrf-token]');
+        if (metaTag) {
+            csrfToken = metaTag.getAttribute('content');
+        }
+        
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+        
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
+        
         const response = await fetch('/events/api/scan-qr', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: headers,
             body: JSON.stringify({ qr_data: qrData })
         });
         
@@ -537,11 +550,24 @@ async function processQRCode(qrData) {
 
 async function markAsAttended() {
     try {
+        // Get CSRF token from meta tag
+        var csrfToken = null;
+        var metaTag = document.querySelector('meta[name=csrf-token]');
+        if (metaTag) {
+            csrfToken = metaTag.getAttribute('content');
+        }
+        
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+        
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
+        
         const response = await fetch('/events/api/mark-attended', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: headers,
             body: JSON.stringify({ attendance_id: currentAttendanceId })
         });
         

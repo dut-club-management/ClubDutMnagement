@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from models.club import Club
+from models.membership import Membership
+from models.notification import Notification
+from app import db
 
 clubs_bp = Blueprint('clubs', __name__, url_prefix='/clubs')
 
@@ -12,14 +15,11 @@ def list_clubs():
 
 # join club endpoint
 def ensure_member(user_id, club_id):
-    from models.membership import Membership
     return Membership.query.filter_by(user_id=user_id, club_id=club_id).first()
 
 @clubs_bp.route('/<int:club_id>/join', methods=['POST'])
 @login_required
 def join_club(club_id):
-    from models.membership import Membership
-    from models.notification import Notification
     club = Club.query.get_or_404(club_id)
     # only active clubs can be joined
     if club.status != 'active':
@@ -35,9 +35,9 @@ def join_club(club_id):
         return redirect(f'/clubs/{club_id}')
     # create membership
     membership = Membership(user_id=current_user.id, club_id=club_id)
-    from app_fixed import db
-    db.session.add(membership)
-    db.session.commit()
+    from flask import current_app
+    current_app.extensions['sqlalchemy'].db.session.add(membership)
+    current_app.extensions['sqlalchemy'].db.session.commit()
     
     # Send notification to student
     try:
@@ -63,29 +63,24 @@ def detail(club_id):
 @clubs_bp.route('/create', methods=['GET','POST'])
 @login_required
 def create():
-    if request.method == 'POST':
-        # Handle form submission
-        club_name = request.form.get('club_name')
-        description = request.form.get('description')
-        category = request.form.get('category')
-        max_members = request.form.get('max_members')
-        meeting_schedule = request.form.get('meeting_schedule', '')
-        
+    from forms import ClubForm
+    form = ClubForm()
+    if form.validate_on_submit():
         new_club = Club(
-            club_name=club_name,
-            description=description,
-            category=category,
-            max_members=int(max_members) if max_members else None,
-            meeting_schedule=meeting_schedule,
+            club_name=form.club_name.data,
+            description=form.description.data,
+            category=form.category.data,
+            max_members=form.max_members.data,
+            meeting_schedule=form.meeting_schedule.data,
             created_by=current_user.id,
             status='pending'
         )
-        from app_fixed import db
-        db.session.add(new_club)
-        db.session.commit()
+        from flask import current_app
+        current_app.extensions['sqlalchemy'].db.session.add(new_club)
+        current_app.extensions['sqlalchemy'].db.session.commit()
+        flash('Club created successfully!', 'success')
         return redirect(f'/clubs/{new_club.id}')
-    
-    return render_template('clubs/create.html')
+    return render_template('clubs/create.html', form=form)
 
 @clubs_bp.route('/<int:club_id>/edit', methods=['GET','POST'])
 @login_required
@@ -96,19 +91,19 @@ def edit(club_id):
     if club.created_by != current_user.id:
         return 'Unauthorized', 403
     
-    if request.method == 'POST':
-        club.club_name = request.form.get('club_name')
-        club.description = request.form.get('description')
-        club.category = request.form.get('category')
-        max_members = request.form.get('max_members')
-        club.max_members = int(max_members) if max_members else None
-        club.meeting_schedule = request.form.get('meeting_schedule')
-        from app import db
-        db.session.commit()
+    from forms import ClubEditForm
+    form = ClubEditForm(obj=club)
+    if form.validate_on_submit():
+        club.club_name = form.club_name.data
+        club.description = form.description.data
+        club.category = form.category.data
+        club.max_members = form.max_members.data
+        club.meeting_schedule = form.meeting_schedule.data
+        from flask import current_app
+        current_app.extensions['sqlalchemy'].db.session.commit()
         flash('Club updated successfully.', 'success')
         return redirect(f'/clubs/{club.id}')
-    
-    return render_template('clubs/edit.html', club=club)
+    return render_template('clubs/edit.html', club=club, form=form)
 
 @clubs_bp.route('/<int:club_id>/manage')
 @login_required
@@ -123,7 +118,7 @@ def manage(club_id):
 @clubs_bp.route('/<int:club_id>/delete', methods=['POST'])
 @login_required
 def delete_club(club_id):
-    from app import db
+    from flask import current_app
     from models.notification import Notification
     
     club = Club.query.get_or_404(club_id)
@@ -134,7 +129,7 @@ def delete_club(club_id):
     
     # Leaders can only request deletion - admin must approve
     club.status = 'pending_deletion'
-    db.session.commit()
+    current_app.extensions['sqlalchemy'].db.session.commit()
     
     # Notify admin about deletion request
     try:
@@ -156,9 +151,9 @@ def kick_member(club_id, user_id):
         return 'Unauthorized', 403
     
     member = Membership.query.filter_by(user_id=user_id, club_id=club_id).first_or_404()
-    from app import db
-    db.session.delete(member)
-    db.session.commit()
+    from flask import current_app
+    current_app.extensions['sqlalchemy'].db.session.delete(member)
+    current_app.extensions['sqlalchemy'].db.session.commit()
     flash('Member removed from club.', 'success')
     return redirect(f'/clubs/{club_id}/manage')
 
@@ -191,8 +186,8 @@ def leave_club(club_id):
         return redirect(f'/clubs/{club_id}')
     
     user = User.query.get(current_user.id)
-    db.session.delete(membership)
-    db.session.commit()
+    current_app.extensions['sqlalchemy'].db.session.delete(membership)
+    current_app.extensions['sqlalchemy'].db.session.commit()
     
     # Notify student
     try:
@@ -310,8 +305,8 @@ def remove_member(club_id, user_id):
         return redirect(f'/clubs/{club_id}/manage')
     
     user = User.query.get(user_id)
-    db.session.delete(membership)
-    db.session.commit()
+    current_app.extensions['sqlalchemy'].db.session.delete(membership)
+    current_app.extensions['sqlalchemy'].db.session.commit()
     
     # Notify student
     try:
@@ -366,12 +361,12 @@ def move_member(club_id, user_id):
     membership = Membership.query.filter_by(user_id=user_id, club_id=club_id).first()
     
     if membership:
-        db.session.delete(membership)
+        current_app.extensions['sqlalchemy'].db.session.delete(membership)
     
     # Create new membership in target club
     new_membership = Membership(user_id=user_id, club_id=target_club_id)
-    db.session.add(new_membership)
-    db.session.commit()
+    current_app.extensions['sqlalchemy'].db.session.add(new_membership)
+    current_app.extensions['sqlalchemy'].db.session.commit()
     
     # Notify student about the move
     try:
@@ -403,8 +398,8 @@ def approve_leave(club_id, user_id):
         return redirect(f'/clubs/{club_id}/manage')
     
     user = User.query.get(user_id)
-    db.session.delete(membership)
-    db.session.commit()
+    current_app.extensions['sqlalchemy'].db.session.delete(membership)
+    current_app.extensions['sqlalchemy'].db.session.commit()
     
     # Notify student
     try:

@@ -26,19 +26,28 @@ def test_database_connection():
         return False, "DATABASE_URL not set"
     
     try:
-        # Import and test database connection only when needed
-        from flask_sqlalchemy import SQLAlchemy
+        # Use pg8000 instead of psycopg2 for Python 3.14 compatibility
+        import pg8000
         
-        # Create temporary Flask app for testing
-        test_app = Flask(__name__)
-        test_app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-        test_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        # Parse database URL and test connection
+        import urllib.parse
         
-        db = SQLAlchemy(test_app)
+        parsed = urllib.parse.urlparse(database_url)
         
-        # Test connection
-        with test_app.app_context():
-            db.engine.execute('SELECT 1')
+        # Connect to PostgreSQL
+        conn = pg8000.connect(
+            user=parsed.username,
+            password=parsed.password,
+            host=parsed.hostname,
+            port=parsed.port or 5432,
+            database=parsed.path.lstrip('/')
+        )
+        
+        # Test simple query
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        cursor.close()
+        conn.close()
         
         return True, "Connected to PostgreSQL database"
     except Exception as e:

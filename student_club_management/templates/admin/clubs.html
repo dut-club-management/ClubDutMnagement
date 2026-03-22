@@ -125,22 +125,26 @@
                     </a>
                     {% if c.status == 'pending' %}
                       <form action="/admin/clubs/approve/{{ c.id }}" method="post" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn-action-small btn-approve" title="Approve Club">
                           ✅ Approve
                         </button>
                       </form>
                       <form action="/admin/clubs/reject/{{ c.id }}" method="post" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn-action-small btn-reject" title="Reject Club">
                           ❌ Reject
                         </button>
                       </form>
                     {% elif c.status == 'pending_deletion' %}
                       <form action="/admin/clubs/approve-delete/{{ c.id }}" method="post" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn-action-small btn-delete" title="Delete Club">
                           🗑️ Confirm Delete
                         </button>
                       </form>
                       <form action="/admin/clubs/deny-delete/{{ c.id }}" method="post" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn-action-small btn-approve" title="Deny Deletion">
                           ✅ Deny Delete
                         </button>

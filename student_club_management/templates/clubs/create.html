@@ -7,7 +7,10 @@
       <h2>Create a New Club 🎉</h2>
       <p class="lead">Start your own club and bring like-minded students together</p>
       
-      <form method="POST" class="mt-4">
+
+<form method="POST" class="mt-4">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
         <div class="form-group mb-3">
           <label for="club_name" class="form-label">Club Name *</label>
           <input type="text" class="form-control" id="club_name" name="club_name" required>

@@ -21,12 +21,9 @@ def index():
     if current_user.role == 'admin':
         announcements = Announcement.query.order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
     elif current_user.role == 'leader':
-        leader_clubs = Club.query.filter_by(created_by=current_user.id).all()
-        member_clubs = Club.query.join(Membership).filter(
-            Membership.user_id == current_user.id,
-            Membership.status == 'active'
-        ).all()
-        club_ids = list(set([c.id for c in leader_clubs] + [c.id for c in member_clubs]))
+        # Show all announcements from all active clubs for any leader
+        active_clubs = Club.query.filter(Club.status == 'active').all()
+        club_ids = [c.id for c in active_clubs]
         announcements = Announcement.query.filter(Announcement.club_id.in_(club_ids)).order_by(
             Announcement.pinned.desc(), Announcement.created_at.desc()
         ).all()
@@ -46,12 +43,9 @@ def unread_count():
     if current_user.role == 'admin':
         club_ids = [c.id for c in Club.query.all()]
     elif current_user.role == 'leader':
-        leader_clubs = Club.query.filter_by(created_by=current_user.id).all()
-        member_clubs = Club.query.join(Membership).filter(
-            Membership.user_id == current_user.id,
-            Membership.status == 'active'
-        ).all()
-        club_ids = list(set([c.id for c in leader_clubs] + [c.id for c in member_clubs]))
+        # Show all active clubs for any leader
+        active_clubs = Club.query.filter(Club.status == 'active').all()
+        club_ids = [c.id for c in active_clubs]
     else:
         memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
         club_ids = [m.club_id for m in memberships]
@@ -130,10 +124,11 @@ def create():
             return redirect('/announcements/create')
         
         club = Club.query.get(club_id)
-        if current_user.role == 'leader':
-            if club.created_by != current_user.id:
-                flash('You can only create announcements for your own clubs', 'danger')
-                return redirect('/announcements')
+        # Allow any leader to create announcements for any club
+        # Only check if club exists
+        if not club:
+            flash('Club not found', 'danger')
+            return redirect('/announcements')
         
         resource_links = request.form.get('resource_links', '')
         resource_links_json = None
@@ -198,7 +193,8 @@ def create():
     if current_user.role == 'admin':
         clubs = Club.query.filter(Club.status == 'active').all()
     else:
-        clubs = Club.query.filter_by(created_by=current_user.id, status='active').all()
+        # Show all active clubs to any leader (not just clubs they created)
+        clubs = Club.query.filter(Club.status == 'active').all()
     
     return render_template('announcements/create.html', clubs=clubs)
 
@@ -226,12 +222,22 @@ def detail(announcement_id):
     user_reaction = announcement.get_user_reaction(current_user.id)
     reactions_count = announcement.get_reactions_count()
     
+    # Parse resource links from JSON
+    resource_links = []
+    if announcement.resource_links:
+        try:
+            import json
+            resource_links = json.loads(announcement.resource_links)
+        except:
+            resource_links = []
+    
     return render_template('announcements/detail.html', 
                          announcement=announcement,
                          club=club,
                          comments=comments,
                          user_reaction=user_reaction,
-                         reactions_count=reactions_count)
+                         reactions_count=reactions_count,
+                         resource_links=resource_links)
 
 @announcements_bp.route('/<int:announcement_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -244,8 +250,8 @@ def edit(announcement_id):
         flash('You do not have permission to edit announcements', 'danger')
         return redirect('/announcements')
     
-    if current_user.role == 'leader' and club.created_by != current_user.id:
-        flash('You can only edit announcements for your own clubs', 'danger')
+    if current_user.role == 'leader' and announcement.created_by != current_user.id:
+        flash('You can only edit your own announcements', 'danger')
         return redirect('/announcements')
     
     if request.method == 'POST':
@@ -299,8 +305,8 @@ def delete(announcement_id):
         flash('You do not have permission to delete announcements', 'danger')
         return redirect('/announcements')
     
-    if current_user.role == 'leader' and club.created_by != current_user.id:
-        flash('You can only delete announcements for your own clubs', 'danger')
+    if current_user.role == 'leader' and announcement.created_by != current_user.id:
+        flash('You can only delete your own announcements', 'danger')
         return redirect('/announcements')
     
     db.session.delete(announcement)
@@ -416,12 +422,9 @@ def mark_all_read():
     if current_user.role == 'admin':
         club_ids = [c.id for c in Club.query.all()]
     elif current_user.role == 'leader':
-        leader_clubs = Club.query.filter_by(created_by=current_user.id).all()
-        member_clubs = Club.query.join(Membership).filter(
-            Membership.user_id == current_user.id,
-            Membership.status == 'active'
-        ).all()
-        club_ids = list(set([c.id for c in leader_clubs] + [c.id for c in member_clubs]))
+        # Show all active clubs for any leader (consistent with other functions)
+        active_clubs = Club.query.filter(Club.status == 'active').all()
+        club_ids = [c.id for c in active_clubs]
     else:
         memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
         club_ids = [m.club_id for m in memberships]
@@ -434,7 +437,7 @@ def mark_all_read():
             AnnouncementNotification.announcement_id.in_(announcement_ids)
         ).all()
         for notification in notifications:
-            notification.notification_sent = True
+            notification.is_read = True
         db.session.commit()
     
     return jsonify({'success': True})

@@ -1,4 +1,4 @@
-from app_fixed import db
+from app import db
 from datetime import datetime
 
 class Notification(db.Model):
@@ -329,7 +329,7 @@ class Notification(db.Model):
         admins = User.query.filter_by(role='admin').all()
         
         title = f"🗑️ Club Deletion Request: {club.club_name}"
-        message = f"Leader has requested to delete the club '{club.club_name}'. Admin approval is required."
+        message = f"Leader has requested to delete club '{club.club_name}'. Admin approval is required."
         
         for admin in admins:
             Notification.send_to_user(
@@ -339,6 +339,28 @@ class Notification(db.Model):
                 notification_type='request',
                 link=f'/admin/clubs'
             )
+    
+    @staticmethod
+    def create_event_reminder(user_id, event, reminder_type, message):
+        """Create event reminder notification"""
+        return Notification.send_to_user(
+            user_id=user_id,
+            title=f"⏰ Event Reminder: {event.event_name}",
+            message=message,
+            notification_type='reminder',
+            link=f'/events/{event.id}'
+        )
+    
+    @staticmethod
+    def create_club_reminder(user_id, club, reminder_type, message):
+        """Create club reminder notification"""
+        return Notification.send_to_user(
+            user_id=user_id,
+            title=f"🏛️ Club Reminder: {club.club_name}",
+            message=message,
+            notification_type='reminder',
+            link=f'/clubs/{club.id}'
+        )
 
 
 class AnnouncementNotification(db.Model):
@@ -348,6 +370,7 @@ class AnnouncementNotification(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     email_sent = db.Column(db.Boolean, default=False)
     notification_sent = db.Column(db.Boolean, default=False)
+    is_read = db.Column(db.Boolean, default=False)
     sent_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     __table_args__ = (db.UniqueConstraint('announcement_id', 'user_id', name='unique_announcement_notification'),)

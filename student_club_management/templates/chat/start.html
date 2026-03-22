@@ -10,7 +10,10 @@
                     <h2 style="color: #fff;">Start New Conversation</h2>
                 </div>
                 
-                <form method="POST" action="/chat/start">
+
+<form method="POST" action="/chat/start">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                     <div class="mb-3">
                         <label style="color: #fff;">Search Recipient</label>
                         <div class="search-input-wrapper">

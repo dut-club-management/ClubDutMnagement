@@ -39,9 +39,11 @@
             
             <div class="mt-auto d-flex gap-2">
               <form method="POST" action="/admin/events/approve/{{ e.id }}" style="flex:1;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-success w-100 btn-sm">✓ Approve</button>
               </form>
               <form method="POST" action="/admin/events/reject/{{ e.id }}" style="flex:1;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-danger w-100 btn-sm">✗ Reject</button>
               </form>
             </div>

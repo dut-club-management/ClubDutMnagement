@@ -5,6 +5,7 @@ from models.club import Club
 from models.user import User
 from models.membership import Membership
 from models.attendance import EventAttendance
+from models.notification import Notification
 from datetime import datetime, timedelta
 import json
 import qrcode
@@ -123,7 +124,8 @@ def create():
         flash('Only club leaders can create events', 'danger')
         return redirect('/events/calendar')
     
-    clubs = Club.query.filter_by(created_by=current_user.id, status='active').all()
+    # Show all active clubs to any leader (not just clubs they created)
+    clubs = Club.query.filter_by(status='active').all()
     
     if request.method == 'POST':
         event_name = request.form.get('event_name')
@@ -153,11 +155,12 @@ def create():
             flash(f'⚠️ Warning: This event conflicts with existing events: {conflict_names}', 'warning')
             # Continue with creation but warn user
         
-        # Verify club ownership if specified
+        # Verify club exists if specified (allow any leader to use any club)
         if club_id:
             club = Club.query.get(club_id)
-            if not club or club.created_by != current_user.id:
-                return 'Unauthorized', 403
+            if not club:
+                flash('Club not found', 'danger')
+                return redirect('/events/create')
         
         new_event = Event(
             event_name=event_name,
@@ -274,9 +277,6 @@ def check_conflicts_api():
 @login_required
 def join(event_id):
     """Join an event - individually or as a club team"""
-    from models.notification import Notification
-    from models.user import User
-    
     event = Event.query.get_or_404(event_id)
     
     if event.status != 'approved':
@@ -430,6 +430,7 @@ def attendance(event_id):
 @login_required
 def scan_qr():
     """Process scanned QR code and return student info"""
+    from app import db
     data = request.get_json()
     qr_data = data.get('qr_data', '')
     
@@ -485,6 +486,7 @@ def scan_qr():
 @login_required
 def mark_attended():
     """Mark student as attended"""
+    from app import db
     data = request.get_json()
     attendance_id = data.get('attendance_id')
     

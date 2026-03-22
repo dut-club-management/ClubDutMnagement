@@ -3,7 +3,7 @@
 
 import sys
 import os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, '.')
 
 from app import create_app, db, bcrypt
 from models.user import User

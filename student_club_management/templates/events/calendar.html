@@ -218,7 +218,7 @@
 
 /* Upcoming Events List */
 .upcoming-events {
-    max-height: 500px;
+    max-height: 600px;
     overflow-y: auto;
     padding-right: 0.5rem;
 }
@@ -235,6 +235,45 @@
 .upcoming-events::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 10px;
+}
+
+.upcoming-events .event-link {
+    display: block;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.upcoming-events .event-link:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+    color: #fff;
+    text-decoration: none;
+}
+
+.upcoming-events .event-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.upcoming-events .event-date {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-bottom: 0.25rem;
+}
+
+.upcoming-events .event-category {
+    font-size: 0.8rem;
+    background: rgba(102,126,234,0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 20px;
+    display: inline-block;
 }
 
 .event-item {
@@ -433,14 +472,14 @@
 
 <div class="row">
     <!-- Calendar -->
-    <div class="col-lg-9 col-md-12">
+    <div class="col-lg-8 col-md-12">
         <div class="glass-card">
             <div id='calendar'></div>
         </div>
     </div>
     
     <!-- Sidebar -->
-    <div class="col-lg-3 col-md-12">
+    <div class="col-lg-4 col-md-12">
         <!-- Stats Card -->
         <div class="glass-card stats-card">
             <h5><i class="fas fa-chart-line"></i> Event Stats</h5>
@@ -579,8 +618,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const countdown = getCountdownText(e.start);
             const location = e.extendedProps?.location || 'TBA';
             
-            return `<a href="/events/${eventId}" class="event-item text-decoration-none">
-                <h6>${title}</h6>
+            return `<a href="/events/${eventId}" class="event-link">
+                <div class="event-title">${title}</div>
                 <div class="event-date">
                     <i class="far fa-calendar-alt"></i> ${date}
                 </div>

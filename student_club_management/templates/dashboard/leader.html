@@ -9,6 +9,9 @@
       <p class="lead mb-0">Manage your clubs and events</p>
     </div>
     <div class="d-flex gap-2 mt-3 mt-lg-0">
+      <a href="/analytics/dashboard" class="btn btn-analytics btn-lg">
+        <i class="fas fa-chart-line"></i> Analytics
+      </a>
       <a href="/announcements/create" class="btn btn-warning btn-lg">
         <i class="fas fa-bullhorn"></i> Create Announcement
       </a>
@@ -35,9 +38,8 @@
 <div class="tab-content glass-card" style="border-radius: 0 12px 12px 12px; border-top: none; padding-top: 1.5rem;">
   <!-- Clubs Tab -->
   <div class="tab-pane fade show active" id="clubs" role="tabpanel">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="mb-3">
       <h4 class="mb-0">My Clubs</h4>
-      <a href="/clubs/create" class="btn btn-success btn-sm">+ Create Club</a>
     </div>
     
     {% if created_clubs %}

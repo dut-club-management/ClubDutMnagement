@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, redirect, flash, request
+from flask import Blueprint, render_template, redirect, flash, request, current_app
 from flask_login import login_required, current_user
-from app_fixed import db, bcrypt
 from models.user import User
 from models.membership import Membership
 from models.event import Event
+from models.club import Club
+from models.user import PreRegisteredStudent
+from app import db
+import bcrypt
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
@@ -25,7 +28,6 @@ def user_dashboard():
 @login_required
 def leader_dashboard():
     # Get clubs created by current user
-    from models.club import Club
     my_clubs = Club.query.filter_by(created_by=current_user.id).all()
     
     # Count total members across all user's clubs
@@ -43,13 +45,10 @@ def admin_dashboard():
     if current_user.role != 'admin':
         return 'Unauthorized', 403
     
-    from models.club import Club
-    from models.user import User
-    from models.event import Event
-    from models.membership import Membership
-    
     total_users = User.query.count()
     total_clubs = Club.query.count()
+    total_events = Event.query.count()
+    total_memberships = Membership.query.count()
     pending_clubs = Club.query.filter_by(status='pending').count()
     pending_club_list = Club.query.filter_by(status='pending').all()
     
@@ -78,8 +77,6 @@ def admin_dashboard():
 @dashboard_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    from models.user import PreRegisteredStudent
-    
     # Get pre-registered student info if available
     pre_student = PreRegisteredStudent.query.filter_by(student_number=current_user.student_number).first()
     

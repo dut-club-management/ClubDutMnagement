@@ -1,4 +1,4 @@
-from app_fixed import db
+from app import db
 
 # import model classes so they are registered
 from models.user import User, PreRegisteredStudent
@@ -13,3 +13,4 @@ from models.association import event_attendees, announcement_read_receipts, User
 from models.attendance import EventAttendance
 from models.notification import Notification, AnnouncementNotification
 from models.chat import ChatConversation, ChatMessage, ChatRequest
+from models.analytics import Analytics, EventReminder, ClubReminder

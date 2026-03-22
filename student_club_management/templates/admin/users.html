@@ -97,6 +97,7 @@
                     {% if u.id != current_user.id %}
                       <!-- Role Dropdown -->
                       <form action="/admin/users/set-role/{{ u.id }}" method="post" class="d-inline role-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <select name="role" class="role-select" onchange="this.form.submit()">
                           <option value="student" {% if u.role == 'student' %}selected{% endif %}>Student</option>
                           <option value="leader" {% if u.role == 'leader' %}selected{% endif %}>Leader</option>
@@ -146,6 +147,7 @@
     <div class="custom-modal-footer">
       <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
       <form id="deleteForm" action="" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="btn-delete-confirm">Delete User</button>
       </form>
     </div>

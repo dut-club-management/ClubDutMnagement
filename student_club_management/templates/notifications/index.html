@@ -41,9 +41,15 @@
 
 <script>
 function handleNotificationClick(link, notificationId) {
+    // Get CSRF token from meta tag
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
     fetch('/notifications/api/mark-read/' + notificationId, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'}
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
     }).then(function() {
         if (link) {
             window.location.href = link;
@@ -56,9 +62,15 @@ function handleNotificationClick(link, notificationId) {
 function deleteNotification(notificationId) {
     if (!confirm('Delete this notification?')) return;
     
+    // Get CSRF token from meta tag
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
     fetch('/notifications/api/delete/' + notificationId, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'}
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
     }).then(function(response) {
         return response.json();
     }).then(function(data) {
@@ -71,9 +83,15 @@ function deleteNotification(notificationId) {
 }
 
 function markAllRead() {
+    // Get CSRF token from meta tag
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
     fetch('/notifications/api/mark-all-read', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'}
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
     }).then(function(response) {
         return response.json();
     }).then(function(data) {

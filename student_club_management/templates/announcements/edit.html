@@ -10,7 +10,10 @@
                     <h2 style="color: #fff;">Edit Announcement</h2>
                 </div>
                 
-                <form method="POST" enctype="multipart/form-data">
+
+<form method="POST" enctype="multipart/form-data">
+  {{ csrf_token() }}
+
                     <div class="mb-3">
                         <label style="color: #fff;">Title</label>
                         <input type="text" name="title" class="form-control" required value="{{ announcement.title }}">
@@ -40,7 +43,7 @@
                     
                     <div class="mb-3">
                         <label style="color: #fff;">Resource Links (one per line)</label>
-                        <textarea name="resource_links" class="form-control" rows="3">{% for link in resource_links %}{{ link }}
+                        <textarea name="resource_links" class="form-control" rows="3">{% for link in announcement.resource_links %}{{ link }}
 {% endfor %}</textarea>
                     </div>
                     

@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, jsonify, request, redirect, flash
+from flask import Blueprint, render_template, jsonify, request, redirect, flash, current_app
 from flask_login import login_required, current_user
-from app_fixed import db
 from models.notification import Notification
 
 notifications_bp = Blueprint('notifications', __name__, url_prefix='/notifications')
@@ -59,6 +58,7 @@ def mark_read(notification_id):
 @login_required
 def mark_all_read():
     """Mark all notifications as read"""
+    from app import db
     Notification.query.filter_by(user_id=current_user.id, is_read=False)\
         .update({'is_read': True})
     db.session.commit()
@@ -69,6 +69,7 @@ def mark_all_read():
 @login_required
 def delete(notification_id):
     """Delete a notification"""
+    from app import db
     notification = Notification.query.get_or_404(notification_id)
     if notification.user_id != current_user.id:
         return jsonify({'error': 'Unauthorized'}), 403

@@ -526,9 +526,192 @@
     padding: 0.8rem 1rem !important;
   }
   
+  /* Fix navigation text visibility on mobile */
+  .nav-item-link span {
+    display: inline !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: inherit !important;
+    font-size: 0.9rem !important;
+    margin-left: 0.25rem !important;
+  }
+  
+  .nav-item-link .nav-icon {
+    font-size: 1rem !important;
+    margin-right: 0.25rem !important;
+  }
+  
   .user-name {
     display: none;
   }
 }
+
+/* Mobile navbar */
+@media (max-width: 575px) {
+  .navbar {
+    padding: 0.5rem;
+  }
+  
+  .navbar-brand {
+    font-size: 1.1rem !important;
+  }
+  
+  .navbar-toggler {
+    padding: 0.35rem 0.5rem;
+  }
+  
+  .navbar-collapse {
+    margin-top: 0.5rem;
+  }
+  
+  /* Fix navigation text visibility on small mobile */
+  .nav-item-link span {
+    display: inline !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: inherit !important;
+    font-size: 0.85rem !important;
+    margin-left: 0.2rem !important;
+  }
+  
+  .nav-item-link .nav-icon {
+    font-size: 0.9rem !important;
+    margin-right: 0.2rem !important;
+  }
+}
+
+/* Theme Toggle Styles */
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  width: 70px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-track {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.toggle-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.toggle-icon.sun {
+  left: 8px;
+  opacity: 1;
+}
+
+.toggle-icon.moon {
+  right: 8px;
+  opacity: 0;
+}
+
+[data-theme="dark"] .toggle-icon.sun {
+  opacity: 0;
+}
+
+[data-theme="dark"] .toggle-icon.moon {
+  opacity: 1;
+}
+
+[data-theme="dark"] .toggle-track {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .theme-toggle {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Dark Mode Styles */
+[data-theme="dark"] {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .glass-card,
+[data-theme="dark"] .glass-card-announcement,
+[data-theme="dark"] .glass-card-notification {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .navbar {
+  background: rgba(15, 23, 42, 0.9);
+}
+
+[data-theme="dark"] .nav-item-link {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .nav-item-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
 </style>
+
+<script>
+// Theme Toggle Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Theme toggle script loaded');
+  
+  const themeToggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  
+  console.log('Theme toggle element:', themeToggle);
+  
+  // Check for saved theme preference or default to light
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  html.setAttribute('data-theme', currentTheme);
+  console.log('Initial theme set to:', currentTheme);
+  
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('Theme toggle clicked');
+      
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      console.log('Switching from', currentTheme, 'to', newTheme);
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      
+      console.log('Theme switched to:', newTheme);
+    });
+  } else {
+    console.error('Theme toggle button not found!');
+  }
+});
+</script>
 

@@ -39,11 +39,27 @@
                 </div>
                 {% endif %}
                 
-                {% if current_user.role in ['leader', 'admin'] and (current_user.role == 'admin' or club.created_by == current_user.id) %}
+                {% if announcement.resource_links %}
+                <div class="announcement-links">
+                    <h5 style="color: #fff;">Resource Links</h5>
+                    {% for link in announcement.resource_links %}
+                    {% if link %}
+                    <div class="link-item mb-2">
+                        <a href="{{ link }}" class="attachment-item" target="_blank" style="display: block; padding: 10px; background: rgba(102,126,234,0.2); border-radius: 8px; color: #fff; text-decoration: none; margin-bottom: 5px;">
+                            <span>🔗 {{ link }}</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if current_user.role == 'admin' or announcement.created_by == current_user.id %}
                 <div class="announcement-actions mb-4">
                     <a href="/announcements/{{ announcement.id }}/edit" class="btn btn-sm" style="background: rgba(102,126,234,0.3); color: #fff;">Edit</a>
                     <form method="POST" action="/announcements/{{ announcement.id }}/delete" class="d-inline" onsubmit="return confirm('Delete this announcement?');">
-                        <button type="submit" class="btn btn-sm" style="background: rgba(239,68,68,0.3); color: #fff;">Delete</button>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm" style="background: rgba(239,68,68,0.3); color: #fff;">🗑️ Delete</button>
                     </form>
                 </div>
                 {% endif %}
@@ -120,7 +136,10 @@ document.getElementById('submitComment').addEventListener('click', function() {
     if (!content) return;
     fetch('/announcements/api/' + announcementId + '/comment', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
         credentials: 'same-origin',
         body: JSON.stringify({content: content})
     }).then(function(r) { return r.json(); })

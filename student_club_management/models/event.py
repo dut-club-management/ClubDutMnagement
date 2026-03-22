@@ -1,4 +1,4 @@
-from app_fixed import db
+from app import db
 from datetime import datetime
 
 class Event(db.Model):

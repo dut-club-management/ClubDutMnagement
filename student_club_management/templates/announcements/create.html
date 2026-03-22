@@ -10,7 +10,10 @@
                     <h2 style="color: #fff;">📢 Create Announcement</h2>
                 </div>
                 
-                <form method="POST" enctype="multipart/form-data">
+
+<form method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                     <div class="mb-3">
                         <label style="color: #fff;">Send To *</label>
                         <select name="send_to" id="sendTo" class="form-select" required onchange="toggleClubSelect()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;">

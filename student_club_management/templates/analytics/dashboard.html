@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% block title %}Analytics Dashboard - DUT Club Management{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 style="color: white;">📊 Analytics Dashboard</h2>
+                <div>
+                    <button class="btn btn-sm me-2" onclick="refreshAnalytics()" style="background: rgba(102,126,234,0.8); color: white;">
+                        🔄 Refresh Data
+                    </button>
+                    <button class="btn btn-sm" onclick="sendReminders()" style="background: rgba(34,197,94,0.8); color: white;">
+                        📧 Send Reminders
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="glass-card text-center">
+                <h3 style="color: #667eea;">👥 Total Users</h3>
+                <h1 style="color: white;">{{ summary.total_counts.users }}</h1>
+                <small style="color: rgba(255,255,255,0.7);">+{{ summary.recent_activity.new_users }} this month</small>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="glass-card text-center">
+                <h3 style="color: #764ba2;">🏛️ Total Clubs</h3>
+                <h1 style="color: white;">{{ summary.total_counts.clubs }}</h1>
+                <small style="color: rgba(255,255,255,0.7);">+{{ summary.recent_activity.new_clubs }} this month</small>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="glass-card text-center">
+                <h3 style="color: #10b981;">📅 Total Events</h3>
+                <h1 style="color: white;">{{ summary.total_counts.events }}</h1>
+                <small style="color: rgba(255,255,255,0.7);">+{{ summary.recent_activity.new_events }} this month</small>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="glass-card text-center">
+                <h3 style="color: #f59e0b;">👥 Total Memberships</h3>
+                <h1 style="color: white;">{{ summary.total_counts.memberships }}</h1>
+                <small style="color: rgba(255,255,255,0.7);">+{{ summary.recent_activity.new_memberships }} this month</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="glass-card">
+                <h4 style="color: white; margin-bottom: 1rem;">📈 Membership Growth (30 days)</h4>
+                <canvas id="membershipChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="glass-card">
+                <h4 style="color: white; margin-bottom: 1rem;">🎯 Event Attendance (30 days)</h4>
+                <canvas id="attendanceChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12 mb-4">
+            <div class="glass-card">
+                <h4 style="color: white; margin-bottom: 1rem;">📊 Participation Trends (30 days)</h4>
+                <canvas id="participationChart" width="800" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Club Status -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="glass-card">
+                <h4 style="color: white; margin-bottom: 1rem;">🏛️ Club Status</h4>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h3 style="color: #10b981;">{{ summary.club_status.active }}</h3>
+                            <p style="color: rgba(255,255,255,0.7);">Active Clubs</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h3 style="color: #f59e0b;">{{ summary.club_status.pending }}</h3>
+                            <p style="color: rgba(255,255,255,0.7);">Pending Clubs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="glass-card">
+                <h4 style="color: white; margin-bottom: 1rem;">📅 Recent Activity</h4>
+                <div class="activity-stats">
+                    <div class="stat-item">
+                        <span style="color: #667eea;">🎉</span>
+                        <span style="color: white;">{{ summary.recent_activity.recent_attendance }} attendances this month</span>
+                    </div>
+                    <div class="stat-item">
+                        <span style="color: #764ba2;">📧</span>
+                        <span style="color: white;">Automated reminders sent daily</span>
+                    </div>
+                    <div class="stat-item">
+                        <span style="color: #10b981;">📊</span>
+                        <span style="color: white;">Analytics updated in real-time</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Chart configuration
+const chartConfig = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            labels: {
+                color: 'rgba(255,255,255,0.8)'
+            }
+        }
+    },
+    scales: {
+        x: {
+            ticks: { color: 'rgba(255,255,255,0.7)' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+        },
+        y: {
+            ticks: { color: 'rgba(255,255,255,0.7)' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+        }
+    }
+};
+
+// Membership Growth Chart
+const membershipCtx = document.getElementById('membershipChart').getContext('2d');
+new Chart(membershipCtx, {
+    type: 'line',
+    data: {
+        labels: [{% for record in membership_growth %}'{{ record.metric_date.strftime('%m/%d') }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'New Memberships',
+            data: [{% for record in membership_growth %}{{ record.metric_value }}{% if not loop.last %},{% endif %}{% endfor %}],
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102,126,234,0.1)',
+            tension: 0.4
+        }]
+    },
+    options: chartConfig
+});
+
+// Event Attendance Chart
+const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+new Chart(attendanceCtx, {
+    type: 'bar',
+    data: {
+        labels: [{% for record in event_attendance %}'{{ record.metric_date.strftime('%m/%d') }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Event Attendance',
+            data: [{% for record in event_attendance %}{{ record.metric_value }}{% if not loop.last %},{% endif %}{% endfor %}],
+            backgroundColor: 'rgba(16,185,129,0.8)',
+            borderColor: '#10b981',
+            borderWidth: 1
+        }]
+    },
+    options: chartConfig
+});
+
+// Participation Trends Chart
+const participationCtx = document.getElementById('participationChart').getContext('2d');
+new Chart(participationCtx, {
+    type: 'line',
+    data: {
+        labels: [{% for record in participation_trends %}'{{ record.metric_date.strftime('%m/%d') }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Overall Participation',
+            data: [{% for record in participation_trends %}{{ record.metric_value }}{% if not loop.last %},{% endif %}{% endfor %}],
+            borderColor: '#764ba2',
+            backgroundColor: 'rgba(118,75,162,0.1)',
+            tension: 0.4
+        }]
+    },
+    options: chartConfig
+});
+
+// Functions
+function refreshAnalytics() {
+    fetch('/analytics/api/refresh', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error refreshing analytics: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error refreshing analytics');
+    });
+}
+
+function sendReminders() {
+    if (confirm('Send event and club reminders to all users?')) {
+        fetch('/analytics/api/send-reminders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Reminders sent successfully!');
+            } else {
+                alert('Error sending reminders: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error sending reminders');
+        });
+    }
+}
+</script>
+
+<style>
+.activity-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+canvas {
+    max-height: 300px;
+}
+</style>
+{% endblock %}

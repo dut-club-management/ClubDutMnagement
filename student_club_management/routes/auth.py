@@ -1,9 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from datetime import datetime, timedelta
-from app_fixed import db, bcrypt, mail
-from models.user import User, PreRegisteredStudent
 from flask_login import login_user, logout_user, login_required, current_user
-from forms import LoginForm, RegistrationForm
 from flask_mail import Message
 import secrets
 import re
@@ -14,6 +11,13 @@ auth_bp = Blueprint('auth', __name__)
 def login():
     if current_user.is_authenticated:
         return redirect('/dashboard/user')
+    
+    # Import inside route to avoid circular imports
+    from forms import LoginForm
+    from models.user import User
+    from models.user import PreRegisteredStudent
+    from app import bcrypt
+    
     form = LoginForm()
     if form.validate_on_submit():
         data = form.email.data
@@ -25,7 +29,7 @@ def login():
                 return redirect('/login')
             login_user(user, remember=form.remember.data)
             user.last_login = datetime.utcnow()
-            db.session.commit()
+            current_app.extensions['sqlalchemy'].db.session.commit()
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
@@ -44,6 +48,13 @@ def login():
 def register():
     if current_user.is_authenticated:
         return redirect('/dashboard/user')
+    
+    # Import all required modules at the top
+    from forms import RegistrationForm
+    from models.user import User
+    from models.user import PreRegisteredStudent
+    from app import bcrypt, db
+    
     form = RegistrationForm()
     if form.validate_on_submit():
         student_number = form.student_number.data.strip()

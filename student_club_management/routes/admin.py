@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, redirect, flash, request
+from flask import Blueprint, render_template, redirect, flash, request, current_app
 from flask_login import login_required, current_user
-from app_fixed import db
 from models.user import User, PreRegisteredStudent
 from models.club import Club
 from models.event import Event
@@ -61,6 +60,7 @@ def settings():
 @admin_bp.route('/clubs/approve/<int:club_id>', methods=['POST'])
 @admin_required
 def approve_club(club_id):
+    from app import db
     from models.notification import Notification
     club = Club.query.get_or_404(club_id)
     club.status = 'active'
@@ -78,6 +78,7 @@ def approve_club(club_id):
 @admin_bp.route('/clubs/reject/<int:club_id>', methods=['POST'])
 @admin_required
 def reject_club(club_id):
+    from app import db
     from models.notification import Notification
     reason = request.form.get('reason', '')
     club = Club.query.get_or_404(club_id)
@@ -155,6 +156,7 @@ def deny_delete_club(club_id):
 @admin_bp.route('/events/approve/<int:event_id>', methods=['POST'])
 @admin_required
 def approve_event(event_id):
+    from app import db
     from models.notification import Notification
     event = Event.query.get_or_404(event_id)
     event.status = 'approved'
@@ -172,6 +174,7 @@ def approve_event(event_id):
 @admin_bp.route('/events/reject/<int:event_id>', methods=['POST'])
 @admin_required
 def reject_event(event_id):
+    from app import db
     from models.notification import Notification
     reason = request.form.get('reason', '')
     event = Event.query.get_or_404(event_id)
@@ -253,6 +256,7 @@ def toggle_user_role(user_id):
 @admin_bp.route('/users/set-role/<int:user_id>', methods=['POST'])
 @admin_required
 def set_user_role(user_id):
+    from app import db
     user = User.query.get_or_404(user_id)
     # Don't allow modifying yourself
     if user.id == current_user.id:
@@ -287,6 +291,7 @@ def manage_students():
 @admin_bp.route('/students/add', methods=['POST'])
 @admin_required
 def add_student():
+    from app import db
     student_number = request.form.get('student_number', '').strip()
     id_number = request.form.get('id_number', '').strip()
     first_name = request.form.get('first_name', '').strip()
@@ -336,6 +341,7 @@ def add_student():
 @admin_bp.route('/students/delete/<int:student_id>', methods=['POST'])
 @admin_required
 def delete_student(student_id):
+    from app import db
     student = PreRegisteredStudent.query.get_or_404(student_id)
     student_num = student.student_number
     db.session.delete(student)
@@ -346,6 +352,7 @@ def delete_student(student_id):
 @admin_bp.route('/students/toggle-status/<int:student_id>', methods=['POST'])
 @admin_required
 def toggle_student_status(student_id):
+    from app import db
     student = PreRegisteredStudent.query.get_or_404(student_id)
     student.is_registered = not student.is_registered
     db.session.commit()

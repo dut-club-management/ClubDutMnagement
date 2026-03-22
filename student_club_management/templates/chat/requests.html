@@ -37,10 +37,12 @@
                         </div>
                         <div class="request-actions">
                             <form method="POST" action="/chat/request/{{ req.id }}/process" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <input type="hidden" name="action" value="approve">
                                 <button type="submit" class="btn btn-sm" style="background: rgba(16,185,129,0.3); color: #fff;">✓ Approve</button>
                             </form>
                             <form method="POST" action="/chat/request/{{ req.id }}/process" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <input type="hidden" name="action" value="deny">
                                 <button type="submit" class="btn btn-sm" style="background: rgba(239,68,68,0.3); color: #fff;">✕ Deny</button>
                             </form>

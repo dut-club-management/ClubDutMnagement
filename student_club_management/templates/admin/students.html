@@ -61,6 +61,7 @@
   </div>
   <div class="admin-card-body">
     <form action="/admin/students/add" method="post" class="row g-3" id="addStudentForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="col-md-3">
         <label for="student_number" class="form-label">Student Number * (8-9 digits)</label>
         <input type="text" class="form-control" id="student_number" name="student_number" placeholder="e.g., 2024001" pattern="^[0-9]{8,9}$" required minlength="8" maxlength="9">
@@ -141,12 +142,14 @@
                   <div class="action-buttons">
                     {% if not s.is_registered %}
                       <form action="/admin/students/toggle-status/{{ s.id }}" method="post" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn-action-small btn-role" title="Mark as Registered">
                           ✅ Mark Registered
                         </button>
                       </form>
                     {% else %}
                       <form action="/admin/students/toggle-status/{{ s.id }}" method="post" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn-action-small btn-role" title="Mark as Pending">
                           ↩️ Mark Pending
                         </button>
@@ -192,6 +195,7 @@
     <div class="custom-modal-footer">
       <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
       <form id="deleteForm" action="" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="btn-delete-confirm">Delete</button>
       </form>
     </div>

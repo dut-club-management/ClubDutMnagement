@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, flash, jsonify
 from flask_login import login_required, current_user
+from flask_wtf.csrf import CSRFError, CSRFProtect
 from app import db
 from models.chat import ChatConversation, ChatMessage, ChatRequest
 from models.club import Club
@@ -8,6 +9,11 @@ from models.membership import Membership
 from models.notification import Notification
 
 chat_bp = Blueprint('chat', __name__, url_prefix='/chat')
+
+# Get CSRF instance from app
+def get_csrf():
+    from flask import current_app
+    return current_app.extensions['csrf']
 
 @chat_bp.route('/')
 @login_required

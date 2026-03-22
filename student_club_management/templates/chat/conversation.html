@@ -122,9 +122,26 @@ document.getElementById('messageForm').addEventListener('submit', function(e) {
     
     if (!message) return;
     
+    // Get CSRF token from meta tag or form
+    var csrfToken = null;
+    var metaTag = document.querySelector('meta[name=csrf-token]');
+    if (metaTag) {
+        csrfToken = metaTag.getAttribute('content');
+    } else {
+        var inputField = document.querySelector('input[name=csrf_token]');
+        if (inputField) {
+            csrfToken = inputField.value;
+        }
+    }
+    
+    var headers = {'Content-Type': 'application/json'};
+    if (csrfToken) {
+        headers['X-CSRFToken'] = csrfToken;
+    }
+    
     fetch('/chat/api/conversation/' + conversationId + '/send', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: JSON.stringify({message: message})
     })
     .then(response => response.json())
@@ -132,6 +149,8 @@ document.getElementById('messageForm').addEventListener('submit', function(e) {
         if (data.success) {
             input.value = '';
             loadMessages();
+        } else {
+            console.error('Error sending message:', data.error);
         }
     })
     .catch(function(err) { console.error('Error sending message:', err); });
