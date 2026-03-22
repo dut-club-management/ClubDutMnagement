@@ -42,23 +42,28 @@ This repository contains the complete ClubDutMnagement system optimized for Rail
    railway up
    ```
 
-### 📋 **Next Steps:**
+### � **Next Steps:**
 
-1. **Push to GitHub:**
+1. **Create GitHub Repository** - **IMPORTANT:** You need to create the repository first!
+   - Go to [github.com](https://github.com) and click "New repository"
+   - Repository name: **`PHELELEKE/ClubDutMnagement`** (exactly as shown)
+   - Description: "Complete Club Management System with Analytics and Automated Reminders"
+   - Make it **Public** and **Initialize with README**
+   - Clone your local code and push: `git remote add origin https://github.com/PHELELEKE/ClubDutMnagement.git`
+   - `git push origin main`
+
+2. **Push Your Code:**
    ```bash
    git add Dockerfile railway.toml .github README_RAILWAY.md RAILWAY_DEPLOYMENT_GUIDE.md .env.production .gitignore
    git commit -m "Ready for Railway deployment - PHELELEKE/ClubDutMnagement"
    git push origin main
    ```
 
-2. **Create Railway Account & Deploy:**
+3. **Deploy on Railway:**
    - Go to [railway.app](https://railway.app)
    - Sign up with your GitHub account (`PHELELEKE`)
-   - Get your Railway API token
+   - Create new project: **`PHELELEKE/ClubDutMnagement`** (select your repository)
    - Deploy your repository
-
-### 🌐 **Repository Name:**
-You'll need to create the repository as **`PHELELEKE/ClubDutMnagement`** to match your GitHub username.
 
 ### 🔧 **Environment Variables**
 
