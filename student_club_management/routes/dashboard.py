@@ -13,31 +13,47 @@ dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 @dashboard_bp.route('/user')
 @login_required
 def user_dashboard():
-    user_clubs = Membership.query.filter_by(user_id=current_user.id).count()
-    # Show approved events from clubs user is member of
-    upcoming_events = Event.query.filter(Event.status == 'approved').all()
-    user_memberships = Membership.query.filter_by(user_id=current_user.id).all()
-    
-    return render_template('dashboard/user.html', 
-                         user=current_user,
-                         clubs_count=user_clubs,
-                         upcoming_events=upcoming_events,
-                         memberships=user_memberships)
+    try:
+        user_clubs = Membership.query.filter_by(user_id=current_user.id).count()
+        # Show approved events from clubs user is member of
+        upcoming_events = Event.query.filter(Event.status == 'approved').all()
+        user_memberships = Membership.query.filter_by(user_id=current_user.id).all()
+        
+        return render_template('dashboard/user.html', 
+                             user=current_user,
+                             clubs_count=user_clubs,
+                             upcoming_events=upcoming_events,
+                             memberships=user_memberships)
+    except Exception as e:
+        print(f"❌ User dashboard error: {e}")
+        # Return basic dashboard with default values if queries fail
+        return render_template('dashboard/user.html', 
+                             user=current_user,
+                             clubs_count=0,
+                             upcoming_events=[],
+                             memberships=[])
 
 @dashboard_bp.route('/leader')
 @login_required
 def leader_dashboard():
-    # Get clubs created by current user
-    my_clubs = Club.query.filter_by(created_by=current_user.id).all()
-    
-    # Count total members across all user's clubs
-    total_members = 0
-    for club in my_clubs:
-        total_members += len(club.members)
-    
-    return render_template('dashboard/leader.html', 
-                         created_clubs=my_clubs,
-                         total_members=total_members)
+    try:
+        # Get clubs created by current user
+        my_clubs = Club.query.filter_by(created_by=current_user.id).all()
+        
+        # Count total members across all user's clubs
+        total_members = 0
+        for club in my_clubs:
+            total_members += len(club.members)
+        
+        return render_template('dashboard/leader.html', 
+                             created_clubs=my_clubs,
+                             total_members=total_members)
+    except Exception as e:
+        print(f"❌ Leader dashboard error: {e}")
+        # Return basic dashboard with default values if queries fail
+        return render_template('dashboard/leader.html', 
+                             created_clubs=[],
+                             total_members=0)
 
 @dashboard_bp.route('/admin')
 @login_required
@@ -45,34 +61,47 @@ def admin_dashboard():
     if current_user.role != 'admin':
         return 'Unauthorized', 403
     
-    total_users = User.query.count()
-    total_clubs = Club.query.count()
-    total_events = Event.query.count()
-    total_memberships = Membership.query.count()
-    pending_clubs = Club.query.filter_by(status='pending').count()
-    pending_club_list = Club.query.filter_by(status='pending').all()
-    
-    # Get active events count
-    active_events = Event.query.filter_by(status='approved').count()
-    
-    # Get recent users
-    recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
-    
-    # Get recent clubs
-    recent_clubs = Club.query.order_by(Club.created_at.desc()).limit(5).all()
-    
-    # Get active members count
-    active_members = Membership.query.filter_by(status='active').count()
-    
-    return render_template('dashboard/admin.html',
-                         total_users=total_users,
-                         total_clubs=total_clubs,
-                         pending_clubs=pending_clubs,
-                         pending_club_list=pending_club_list,
-                         active_events=active_events,
-                         recent_users=recent_users,
-                         recent_clubs=recent_clubs,
-                         active_members=active_members)
+    try:
+        total_users = User.query.count()
+        total_clubs = Club.query.count()
+        total_events = Event.query.count()
+        total_memberships = Membership.query.count()
+        pending_clubs = Club.query.filter_by(status='pending').count()
+        pending_club_list = Club.query.filter_by(status='pending').all()
+        
+        # Get active events count
+        active_events = Event.query.filter_by(status='approved').count()
+        
+        # Get recent users
+        recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
+        
+        # Get recent clubs
+        recent_clubs = Club.query.order_by(Club.created_at.desc()).limit(5).all()
+        
+        # Get active members count
+        active_members = Membership.query.filter_by(status='active').count()
+        
+        return render_template('dashboard/admin.html',
+                             total_users=total_users,
+                             total_clubs=total_clubs,
+                             pending_clubs=pending_clubs,
+                             pending_club_list=pending_club_list,
+                             active_events=active_events,
+                             recent_users=recent_users,
+                             recent_clubs=recent_clubs,
+                             active_members=active_members)
+    except Exception as e:
+        print(f"❌ Admin dashboard error: {e}")
+        # Return basic dashboard with default values if queries fail
+        return render_template('dashboard/admin.html',
+                             total_users=0,
+                             total_clubs=0,
+                             pending_clubs=0,
+                             pending_club_list=[],
+                             active_events=0,
+                             recent_users=[],
+                             recent_clubs=[],
+                             active_members=0)
 
 @dashboard_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
