@@ -37,7 +37,7 @@ else:
 @app.route('/')
 def index():
     if not database_url:
-        return """
+        return f"""
         <h1>🎉 Club Management System</h1>
         <h2>📊 Database Status: Not configured</h2>
         <h3>🔧 Environment Variables:</h3>
