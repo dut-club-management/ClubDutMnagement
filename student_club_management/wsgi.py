@@ -17,7 +17,9 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import urllib.parse
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, 
+           template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
+           static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
@@ -194,6 +196,140 @@ def initialize_database():
 
 # Initialize database
 db_initialized = initialize_database()
+
+# Routes
+@app.route('/')
+def index():
+    if 'user_id' in session:
+        return redirect('/dashboard')
+    return redirect('/login')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('email')  # Using email field from template
+        password = request.form.get('password')
+        
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            session['user_id'] = user.username
+            session['user_role'] = user.role
+            flash(f'Welcome back, {user.first_name}!', 'success')
+            return redirect('/dashboard')
+        else:
+            flash('Invalid username or password', 'danger')
+    
+    return render_template('login_simple.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        email = request.form.get('email')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        
+        if username and password and email and first_name and last_name:
+            # Check if user already exists
+            if User.query.filter_by(username=username).first():
+                flash('Username already exists', 'danger')
+            elif User.query.filter_by(email=email).first():
+                flash('Email already exists', 'danger')
+            else:
+                # Create new user
+                user = User(
+                    username=username,
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    role='member'
+                )
+                user.set_password(password)
+                db.session.add(user)
+                db.session.commit()
+                
+                flash('Registration successful! Please login.', 'success')
+                return redirect('/login')
+        else:
+            flash('Please fill in all fields', 'danger')
+    
+    # For now, redirect to login since we don't have a register template
+    return render_template('login_simple.html')
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    if not db_initialized:
+        return render_template('login_simple.html')
+    
+    # Get current user
+    user = User.query.filter_by(username=session['user_id']).first()
+    if not user:
+        return redirect('/login')
+    
+    # Get statistics
+    total_users = User.query.count()
+    total_clubs = Club.query.filter_by(is_active=True).count()
+    total_events = Event.query.filter(Event.event_date >= date.today()).count()
+    total_attendances = EventAttendance.query.count()
+    
+    return render_template('dashboard_simple.html', 
+                     user=user,
+                     clubs_count=total_clubs,
+                     events_count=total_events,
+                     members_count=total_users,
+                     announcements_count=0)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out', 'success')
+    return redirect('/login')
+
+@app.route('/clubs')
+def clubs():
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    # Simple clubs page for now
+    user = User.query.filter_by(username=session['user_id']).first()
+    return render_template('dashboard_simple.html', 
+                     user=user,
+                     clubs_count=0,
+                     events_count=0,
+                     members_count=0,
+                     announcements_count=0)
+
+@app.route('/events')
+def events():
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    # Simple events page for now
+    user = User.query.filter_by(username=session['user_id']).first()
+    return render_template('dashboard_simple.html', 
+                     user=user,
+                     clubs_count=0,
+                     events_count=0,
+                     members_count=0,
+                     announcements_count=0)
+
+@app.route('/chat')
+def chat():
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    # Simple chat page for now
+    user = User.query.filter_by(username=session['user_id']).first()
+    return render_template('dashboard_simple.html', 
+                     user=user,
+                     clubs_count=0,
+                     events_count=0,
+                     members_count=0,
+                     announcements_count=0)
 
 if __name__ == "__main__":
     app.run(debug=True)
