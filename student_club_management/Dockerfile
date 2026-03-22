@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Set environment variables
 ENV PYTHONPATH=/app
-ENV FLASK_APP=app.py
+ENV FLASK_APP=wsgi.py
 ENV FLASK_ENV=production
 
 # Install dependencies
@@ -20,7 +20,7 @@ COPY . .
 EXPOSE 5000
 
 # Production server with multiple workers
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "wsgi:app"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
