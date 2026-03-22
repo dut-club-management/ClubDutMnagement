@@ -5,7 +5,7 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'you-should-set-a-secret')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'mssql+pyodbc://DESKTOP-QN2C237\\SQLEXPRESS/ClubManagementDB?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes')
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///instance/clubmanagement.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Email Configuration
