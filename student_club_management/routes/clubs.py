@@ -69,9 +69,20 @@ def detail(club_id):
 @login_required
 def create():
     try:
+        print("🔍 Club create: Starting club creation...")
+        
         from forms import ClubForm
+        print("🔍 Club create: Form imported")
+        
         form = ClubForm()
+        print("🔍 Club create: Form created")
+        
         if form.validate_on_submit():
+            print("🔍 Club create: Form validated, creating club...")
+            print(f"🔍 Club create: Club name: {form.club_name.data}")
+            print(f"🔍 Club create: Category: {form.category.data}")
+            print(f"🔍 Club create: Max members: {form.max_members.data}")
+            
             new_club = Club(
                 club_name=form.club_name.data,
                 description=form.description.data,
@@ -81,14 +92,33 @@ def create():
                 created_by=current_user.id,
                 status='pending'
             )
+            
+            print("🔍 Club create: Club object created")
+            
             from flask import current_app
             current_app.extensions['sqlalchemy'].db.session.add(new_club)
+            print("🔍 Club create: Club added to session")
+            
             current_app.extensions['sqlalchemy'].db.session.commit()
+            print("🔍 Club create: Club committed to database")
+            
             flash('Club created successfully! It is now pending approval.', 'success')
+            print("🔍 Club create: Success message flashed")
+            
             return redirect(f'/clubs/{new_club.id}')
+        else:
+            print("🔍 Club create: Form not validated, showing form")
+            if form.errors:
+                print(f"🔍 Club create: Form errors: {form.errors}")
+            
+        print("🔍 Club create: Rendering create template")
         return render_template('clubs/create.html', form=form)
+        
     except Exception as e:
         print(f"❌ Club creation error: {e}")
+        print(f"❌ Error type: {type(e)}")
+        import traceback
+        print(f"❌ Full traceback: {traceback.format_exc()}")
         flash('Error creating club. Please try again.', 'danger')
         return redirect('/clubs')
 

@@ -22,17 +22,32 @@ def admin_required(func):
 @admin_required
 def admin_index():
     try:
+        print("🔍 Admin index: Starting admin panel loading...")
+        
         # Get basic statistics for admin panel
+        print("🔍 Admin index: Importing models...")
         from models.user import User
         from models.club import Club
         from models.event import Event
         from models.membership import Membership
         
+        print("🔍 Admin index: Querying users...")
         total_users = User.query.count()
-        total_clubs = Club.query.count()
-        total_events = Event.query.count()
-        active_members = Membership.query.filter_by(status='active').count()
+        print(f"🔍 Admin index: Found {total_users} users")
         
+        print("🔍 Admin index: Querying clubs...")
+        total_clubs = Club.query.count()
+        print(f"🔍 Admin index: Found {total_clubs} clubs")
+        
+        print("🔍 Admin index: Querying events...")
+        total_events = Event.query.count()
+        print(f"🔍 Admin index: Found {total_events} events")
+        
+        print("🔍 Admin index: Querying active members...")
+        active_members = Membership.query.filter_by(status='active').count()
+        print(f"🔍 Admin index: Found {active_members} active members")
+        
+        print("🔍 Admin index: Rendering template...")
         return render_template('admin/index.html', 
                              total_users=total_users,
                              total_clubs=total_clubs,
@@ -40,6 +55,9 @@ def admin_index():
                              active_members=active_members)
     except Exception as e:
         print(f"❌ Admin index error: {e}")
+        print(f"❌ Error type: {type(e)}")
+        import traceback
+        print(f"❌ Full traceback: {traceback.format_exc()}")
         # If queries fail, render basic admin panel with default values
         return render_template('admin/index.html', 
                              total_users=0,
