@@ -344,17 +344,32 @@ def dashboard():
         return redirect('/login')
     
     if not db_initialized:
-        dashboard_error_template = BASE_TEMPLATE.replace('{% block title %}Club Management System{% endblock %}', 'Dashboard') + """
-        {% block content %}
-        <div class="card">
-            <h2>🔧 Database Not Available</h2>
-            <p>The database is not currently available. Please check your configuration.</p>
-            <p><strong>DATABASE_URL:</strong> """ + ('Set' if database_url else 'Not Set') + """</p>
-            <p><strong>Database Status:</strong> """ + ('Connected' if db_initialized else 'Not Connected') + """</p>
-        </div>
-        {% endblock %}
+        dashboard_error_template = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Dashboard</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+                .card { background: white; border: 1px solid #e9ecef; border-radius: 8px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="card">
+                    <h2>🔧 Database Not Available</h2>
+                    <p>The database is not currently available. Please check your configuration.</p>
+                    <p><strong>DATABASE_URL:</strong> """ + ('Set' if database_url else 'Not Set') + """</p>
+                    <p><strong>Database Status:</strong> """ + ('Connected' if db_initialized else 'Not Connected') + """</p>
+                </div>
+            </div>
+        </body>
+        </html>
         """
-        return render_template_string(dashboard_error_template)
+        return dashboard_error_template
     
     # Get statistics
     try:
@@ -381,17 +396,33 @@ def dashboard():
                                upcoming_events=upcoming_events)
     except Exception as e:
         error_message = str(e)
-        dashboard_error_template = BASE_TEMPLATE.replace('{% block title %}Club Management System{% endblock %}', 'Dashboard Error') + """
-        {% block content %}
-        <div class="card">
-            <h2>❌ Database Error</h2>
-            <p>There was an error accessing the database:</p>
-            <p><code>""" + error_message + """</code></p>
-            <p>Please check your database configuration and try again.</p>
-        </div>
-        {% endblock %}
+        dashboard_error_template = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Dashboard Error</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+                .card { background: white; border: 1px solid #e9ecef; border-radius: 8px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                code { background: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="card">
+                    <h2>❌ Database Error</h2>
+                    <p>There was an error accessing the database:</p>
+                    <p><code>""" + error_message + """</code></p>
+                    <p>Please check your database configuration and try again.</p>
+                </div>
+            </div>
+        </body>
+        </html>
         """
-        return render_template_string(dashboard_error_template)
+        return dashboard_error_template
 
 @app.route('/logout')
 def logout():
@@ -426,7 +457,9 @@ def initialize_database():
         with app.app_context():
             # Test database connection first
             if database_url:
-                db.engine.execute('SELECT 1')
+                # Use text() wrapper for SQLAlchemy 2.0 compatibility
+                from sqlalchemy import text
+                db.session.execute(text('SELECT 1'))
                 print("Database connection successful")
                 
                 # Create tables
