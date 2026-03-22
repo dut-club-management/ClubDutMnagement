@@ -21,7 +21,15 @@ app = Flask(__name__)
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///clubmanagement.db')
+
+# Configure PostgreSQL with pg8000 for Python 3.14 compatibility
+database_url = os.environ.get('DATABASE_URL')
+if database_url:
+    # Replace postgresql:// with postgresql+pg8000:// to use pg8000 driver
+    if database_url.startswith('postgresql://'):
+        database_url = database_url.replace('postgresql://', 'postgresql+pg8000://')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
