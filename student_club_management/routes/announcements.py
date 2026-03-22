@@ -40,29 +40,33 @@ def index():
 @login_required
 def unread_count():
     """Get count of unread announcements for real-time badge updates"""
-    if current_user.role == 'admin':
-        club_ids = [c.id for c in Club.query.all()]
-    elif current_user.role == 'leader':
-        # Show all active clubs for any leader
-        active_clubs = Club.query.filter(Club.status == 'active').all()
-        club_ids = [c.id for c in active_clubs]
-    else:
-        memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
-        club_ids = [m.club_id for m in memberships]
-    
-    if not club_ids:
+    try:
+        if current_user.role == 'admin':
+            club_ids = [c.id for c in Club.query.all()]
+        elif current_user.role == 'leader':
+            # Show all active clubs for any leader
+            active_clubs = Club.query.filter(Club.status == 'active').all()
+            club_ids = [c.id for c in active_clubs]
+        else:
+            memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
+            club_ids = [m.club_id for m in memberships]
+        
+        if not club_ids:
+            return jsonify({'count': 0})
+        
+        read_receipts = db.session.query(AnnouncementNotification.announcement_id).filter(
+            AnnouncementNotification.user_id == current_user.id
+        ).subquery()
+        
+        unread_count = db.session.query(func.count(Announcement.id)).filter(
+            Announcement.club_id.in_(club_ids),
+            ~Announcement.id.in_(select(read_receipts))
+        ).scalar() or 0
+        
+        return jsonify({'count': unread_count})
+    except Exception as e:
+        print(f"❌ Announcements API error: {e}")
         return jsonify({'count': 0})
-    
-    read_receipts = db.session.query(AnnouncementNotification.announcement_id).filter(
-        AnnouncementNotification.user_id == current_user.id
-    ).subquery()
-    
-    unread_count = db.session.query(func.count(Announcement.id)).filter(
-        Announcement.club_id.in_(club_ids),
-        ~Announcement.id.in_(select(read_receipts))
-    ).scalar() or 0
-    
-    return jsonify({'count': unread_count})
 
 @announcements_bp.route('/club/<int:club_id>')
 @login_required

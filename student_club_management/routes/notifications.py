@@ -20,8 +20,12 @@ def index():
 @login_required
 def unread_count():
     """Get count of unread notifications"""
-    count = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
-    return jsonify({'count': count})
+    try:
+        count = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
+        return jsonify({'count': count})
+    except Exception as e:
+        print(f"❌ Notifications API error: {e}")
+        return jsonify({'count': 0})
 
 # API: Get latest - Returns recent notifications for dropdown/preview
 @notifications_bp.route('/api/latest')

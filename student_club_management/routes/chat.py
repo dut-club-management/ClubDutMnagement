@@ -480,11 +480,15 @@ def process_request(request_id):
 @login_required
 def unread_count():
     """Get total unread message count"""
-    count = ChatMessage.query.filter_by(
-        recipient_id=current_user.id,
-        is_read=False
-    ).count()
-    return jsonify({'count': count})
+    try:
+        count = ChatMessage.query.filter_by(
+            recipient_id=current_user.id,
+            is_read=False
+        ).count()
+        return jsonify({'count': count})
+    except Exception as e:
+        print(f"❌ Chat API error: {e}")
+        return jsonify({'count': 0})
 
 # API: Search users - Returns users matching search query for starting conversations
 @chat_bp.route('/api/search-users')
