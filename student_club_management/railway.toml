@@ -1,11 +1,11 @@
 # Railway Configuration File
 [build]
 builder = "NIXPACKS"
-buildCommand = "python -m venv venv && source venv/bin/activate && pip install -r requirements.txt"
+buildCommand = "echo 'Forcing fresh build'"
 
 [deploy]
-startCommand = "gunicorn app:app"
-restartPolicyType = "ON_FAILURE"
+startCommand = "gunicorn --bind 0.0.0.0:$PORT wsgi:app"
+restartPolicyType = "ALWAYS"
 restartPolicyMaxRetries = 3
 healthcheckPath = "/health"
 healthcheckTimeout = 100
@@ -13,6 +13,4 @@ healthcheckTimeout = 100
 [[services]]
 name = "web"
 source = "."
-```
-<tool_call>EmptyFile</arg_key>
 <arg_value>false
