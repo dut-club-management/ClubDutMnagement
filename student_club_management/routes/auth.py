@@ -29,7 +29,8 @@ def login():
                 return redirect('/login')
             login_user(user, remember=form.remember.data)
             user.last_login = datetime.utcnow()
-            current_app.extensions['sqlalchemy'].db.session.commit()
+            from app import db
+            db.session.commit()
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
