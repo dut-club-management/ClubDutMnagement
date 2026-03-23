@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, flash, jsonify
 from flask_login import login_required, current_user
+from flask_wtf import FlaskForm
 from app import db
 from models.announcement import Announcement, AnnouncementReaction, AnnouncementComment
 from models.club import Club
@@ -94,6 +95,11 @@ def create():
         flash('Only leaders and admins can create announcements', 'warning')
         return redirect('/announcements')
     
+    class AnnouncementForm(FlaskForm):
+        pass
+    
+    form = AnnouncementForm()
+    
     if request.method == 'POST':
         send_to = request.form.get('send_to', 'club_members')
         club_id = request.form.get('club_id')
@@ -124,7 +130,7 @@ def create():
                     return redirect('/announcements/create')
         
         if not title or not content:
-            flash('Please fill in all required fields', 'danger')
+            flash('Title and content are required', 'danger')
             return redirect('/announcements/create')
         
         club = Club.query.get(club_id)
@@ -200,7 +206,7 @@ def create():
     else:
         clubs = Club.query.filter(Club.status == 'active').all()
     
-    return render_template('announcements/create.html', clubs=clubs)
+    return render_template('announcements/create.html', form=form, clubs=clubs)
 
 @announcements_bp.route('/<int:announcement_id>')
 @login_required
