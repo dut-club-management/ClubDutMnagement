@@ -88,50 +88,7 @@
   z-index: 2;
 }
 
-/* Action Buttons */
-.btn-refresh, .btn-reminders {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: white;
-  padding: 0.8rem 1.8rem;
-  border-radius: 50px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(15px);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-left: 0.8rem;
-  position: relative;
-  overflow: hidden;
-  z-index: 2;
-}
-
-.btn-refresh::before, .btn-reminders::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.6s ease;
-}
-
-.btn-refresh:hover::before, .btn-reminders:hover::before {
-  left: 100%;
-}
-
-.btn-refresh:hover, .btn-reminders:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2),
-              0 5px 15px rgba(0, 0, 0, 0.1);
-  color: white;
-  text-decoration: none;
-  border-color: rgba(255, 255, 255, 0.5);
-}
+/* Action Buttons - Removed to prevent errors */
 
 /* Stats Cards */
 .stats-grid {
@@ -618,19 +575,9 @@ canvas {
 <!-- Header -->
 <div class="analytics-header">
   <div class="row align-items-center">
-    <div class="col-lg-8">
+    <div class="col-12">
       <h1 class="analytics-title">📊 Analytics Dashboard</h1>
       <p class="analytics-subtitle">Real-time insights into club activities and engagement</p>
-    </div>
-    <div class="col-lg-4 text-lg-end">
-      <div class="d-flex gap-2 justify-content-lg-end flex-wrap">
-        <button class="btn-refresh" onclick="refreshAnalytics()">
-          <span>🔄</span> Refresh Data
-        </button>
-        <button class="btn-reminders" onclick="sendReminders()">
-          <span>📧</span> Send Reminders
-        </button>
-      </div>
     </div>
   </div>
 </div>
@@ -957,68 +904,6 @@ new Chart(participationCtx, {
     options: chartConfig
 });
 
-// Functions
-function refreshAnalytics() {
-    const button = event.target;
-    button.disabled = true;
-    button.innerHTML = '<span>⏳</span> Refreshing...';
-    
-    fetch('/analytics/api/refresh', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            alert('Error refreshing analytics: ' + data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error refreshing analytics');
-    })
-    .finally(() => {
-        button.disabled = false;
-        button.innerHTML = '<span>🔄</span> Refresh Data';
-    });
-}
-
-function sendReminders() {
-    if (confirm('Send event and club reminders to all users?')) {
-        const button = event.target;
-        button.disabled = true;
-        button.innerHTML = '<span>⏳</span> Sending...';
-        
-        fetch('/analytics/api/send-reminders', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Reminders sent successfully!');
-            } else {
-                alert('Error sending reminders: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error sending reminders');
-        })
-        .finally(() => {
-            button.disabled = false;
-            button.innerHTML = '<span>📧</span> Send Reminders';
-        });
-    }
-}
 </script>
 
 {% endblock %}
