@@ -22,7 +22,16 @@ class RegistrationForm(FlaskForm):
 class ClubForm(FlaskForm):
     club_name = StringField('Club Name', validators=[DataRequired(), Length(max=100)])
     description = TextAreaField('Description', validators=[DataRequired(), Length(max=500)])
-    category = StringField('Category', validators=[DataRequired(), Length(max=50)])
+    category = SelectField('Category', choices=[
+        ('', 'Select a category'),
+        ('Academic', 'Academic'),
+        ('Sports', 'Sports'),
+        ('Cultural', 'Cultural'),
+        ('Social', 'Social'),
+        ('Technical', 'Technical'),
+        ('Arts', 'Arts'),
+        ('Other', 'Other')
+    ], validators=[DataRequired()])
     max_members = IntegerField('Max Members', validators=[Optional()])
     meeting_schedule = StringField('Meeting Schedule', validators=[Optional()])
     submit = SubmitField('Create Club')

@@ -7,49 +7,74 @@
       <h2>Create a New Club 🎉</h2>
       <p class="lead">Start your own club and bring like-minded students together</p>
       
-
-<form method="POST" class="mt-4">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
+      <form method="POST" class="mt-4">
+        {{ form.hidden_tag() }}
+        
         <div class="form-group mb-3">
-          <label for="club_name" class="form-label">Club Name *</label>
-          <input type="text" class="form-control" id="club_name" name="club_name" required>
+          {{ form.club_name.label(class="form-label") }}
+          {{ form.club_name(class="form-control") }}
+          {% if form.club_name.errors %}
+            <div class="text-danger">
+              {% for error in form.club_name.errors %}
+                <small>{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
           <small class="form-text text-muted">Choose a unique and descriptive name</small>
         </div>
         
         <div class="form-group mb-3">
-          <label for="description" class="form-label">Description *</label>
-          <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+          {{ form.description.label(class="form-label") }}
+          {{ form.description(class="form-control", rows="5") }}
+          {% if form.description.errors %}
+            <div class="text-danger">
+              {% for error in form.description.errors %}
+                <small>{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
           <small class="form-text text-muted">Tell us what your club is about</small>
         </div>
         
         <div class="form-group mb-3">
-          <label for="category" class="form-label">Category *</label>
-          <select class="form-select" id="category" name="category" required>
-            <option value="">Select a category</option>
-            <option value="Academic">Academic</option>
-            <option value="Sports">Sports</option>
-            <option value="Cultural">Cultural</option>
-            <option value="Social">Social</option>
-            <option value="Technical">Technical</option>
-            <option value="Arts">Arts</option>
-            <option value="Other">Other</option>
-          </select>
+          {{ form.category.label(class="form-label") }}
+          {{ form.category(class="form-select") }}
+          {% if form.category.errors %}
+            <div class="text-danger">
+              {% for error in form.category.errors %}
+                <small>{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
         
         <div class="form-group mb-3">
-          <label for="max_members" class="form-label">Maximum Members</label>
-          <input type="number" class="form-control" id="max_members" name="max_members" min="1" placeholder="Leave empty for unlimited">
+          {{ form.max_members.label(class="form-label") }}
+          {{ form.max_members(class="form-control", placeholder="Leave empty for unlimited") }}
+          {% if form.max_members.errors %}
+            <div class="text-danger">
+              {% for error in form.max_members.errors %}
+                <small>{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
           <small class="form-text text-muted">Set a limit or leave blank for unlimited members</small>
         </div>
         
         <div class="form-group mb-3">
-          <label for="meeting_schedule" class="form-label">Meeting Schedule</label>
-          <input type="text" class="form-control" id="meeting_schedule" name="meeting_schedule" placeholder="e.g., Every Tuesday at 5 PM">
+          {{ form.meeting_schedule.label(class="form-label") }}
+          {{ form.meeting_schedule(class="form-control", placeholder="e.g., Every Tuesday at 5 PM") }}
+          {% if form.meeting_schedule.errors %}
+            <div class="text-danger">
+              {% for error in form.meeting_schedule.errors %}
+                <small>{{ error }}</small>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
         
         <div class="mt-4">
-          <button type="submit" class="btn btn-success btn-lg">Create Club</button>
+          {{ form.submit(class="btn btn-success btn-lg") }}
           <a href="/clubs/" class="btn btn-secondary btn-lg">Cancel</a>
         </div>
       </form>
