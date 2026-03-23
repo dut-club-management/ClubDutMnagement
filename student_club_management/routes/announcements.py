@@ -315,11 +315,11 @@ def edit(announcement_id):
             file = request.files['attachment']
             if file.filename:
                 filename = secure_filename(file.filename)
-                upload_folder = 'static/uploads/announcements'
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'announcements')
                 os.makedirs(upload_folder, exist_ok=True)
                 filepath = os.path.join(upload_folder, f"{datetime.now().timestamp()}_{filename}")
                 file.save(filepath)
-                announcement.attachment_url = filepath
+                announcement.attachment_url = f"static/uploads/announcements/{os.path.basename(filepath)}"
                 announcement.attachment_name = file.filename
         
         db.session.commit()
@@ -350,12 +350,18 @@ def delete(announcement_id):
         print(f"🔍 Announcement delete: Found announcement: {announcement.title}")
         print(f"🔍 Announcement delete: User role: {current_user.role}")
         
-        if current_user.role == 'student':
+        if current_user.role == 'admin':
+            print("🔍 Announcement delete: Admin user - allowing deletion")
+        elif current_user.role == 'leader':
+            if announcement.created_by != current_user.id:
+                print(f"🔍 Announcement delete: Leader trying to delete other's announcement (created_by: {announcement.created_by}, current_user: {current_user.id})")
+                flash('You can only delete your own announcements', 'danger')
+                return redirect('/announcements')
+            else:
+                print("🔍 Announcement delete: Leader deleting own announcement - allowed")
+        elif current_user.role == 'student':
+            print("🔍 Announcement delete: Student user - denying deletion")
             flash('You do not have permission to delete announcements', 'danger')
-            return redirect('/announcements')
-        
-        if current_user.role == 'leader' and announcement.created_by != current_user.id:
-            flash('You can only delete your own announcements', 'danger')
             return redirect('/announcements')
         
         print("🔍 Announcement delete: Deleting announcement from database...")
