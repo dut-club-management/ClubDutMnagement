@@ -44,11 +44,11 @@
                     </div>
                     {% endif %}
                     
-                    {% if announcement.resource_links %}
+                    {% if resource_links %}
                     <div class="resource-links mb-4">
                         <h6>🔗 Resource Links:</h6>
                         <div class="d-flex flex-wrap gap-2">
-                            {% for link in announcement.resource_links %}
+                            {% for link in resource_links %}
                             <a href="{{ link }}" target="_blank" class="btn btn-outline-secondary btn-sm">
                                 <i class="fas fa-external-link-alt me-1"></i>
                                 {{ link | truncate(30) }}

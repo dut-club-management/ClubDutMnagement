@@ -91,163 +91,196 @@ def club_announcements(club_id):
 @login_required
 def create():
     """Create a new announcement"""
-    if current_user.role not in ['leader', 'admin']:
-        flash('Only leaders and admins can create announcements', 'warning')
-        return redirect('/announcements')
-    
-    class AnnouncementForm(FlaskForm):
-        pass
-    
-    form = AnnouncementForm()
-    
-    if request.method == 'POST':
-        send_to = request.form.get('send_to', 'club_members')
-        club_id = request.form.get('club_id')
-        title = request.form.get('title')
-        content = request.form.get('content')
-        priority = request.form.get('priority', 'normal')
-        pinned = request.form.get('pinned') == 'on'
-        
-        if send_to == 'club_members':
-            if not club_id:
-                flash('Please select a club', 'danger')
-                return redirect('/announcements/create')
-        elif send_to == 'students_only':
-            if not club_id:
-                club = Club.query.filter(Club.status == 'active').first()
-                if club:
-                    club_id = str(club.id)
-                else:
-                    flash('No active clubs available', 'danger')
-                    return redirect('/announcements/create')
-        else:
-            if not club_id:
-                club = Club.query.filter(Club.status == 'active').first()
-                if club:
-                    club_id = str(club.id)
-                else:
-                    flash('No active clubs available', 'danger')
-                    return redirect('/announcements/create')
-        
-        if not title or not content:
-            flash('Title and content are required', 'danger')
-            return redirect('/announcements/create')
-        
-        club = Club.query.get(club_id)
-        # Allow any leader to create announcements for any club
-        # Only check if club exists
-        if not club:
-            flash('Club not found', 'danger')
+    try:
+        if current_user.role not in ['leader', 'admin']:
+            flash('Only leaders and admins can create announcements', 'warning')
             return redirect('/announcements')
         
-        resource_links = request.form.get('resource_links', '')
-        resource_links_json = None
-        if resource_links:
-            try:
-                links = [l.strip() for l in resource_links.split('\n') if l.strip()]
-                resource_links_json = json.dumps(links)
-            except:
-                pass
+        class AnnouncementForm(FlaskForm):
+            pass
         
-        attachment_url = None
-        attachment_name = None
-        if 'attachment' in request.files:
-            file = request.files['attachment']
-            if file.filename:
-                filename = secure_filename(file.filename)
-                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'announcements')
-                os.makedirs(upload_folder, exist_ok=True)
-                filepath = os.path.join(upload_folder, f"{datetime.now().timestamp()}_{filename}")
-                file.save(filepath)
-                attachment_url = f"static/uploads/announcements/{os.path.basename(filepath)}"
-                attachment_name = file.filename
+        form = AnnouncementForm()
         
-        announcement = Announcement(
-            club_id=int(club_id),
-            created_by=current_user.id,
-            title=title,
-            content=content,
-            priority=priority,
-            pinned=pinned,
-            attachment_url=attachment_url,
-            attachment_name=attachment_name,
-            resource_links=resource_links_json
-        )
-        db.session.add(announcement)
-        db.session.commit()
-        
-        try:
-            if send_to == 'all_users' and current_user.role == 'admin':
-                from models.user import User
-                all_users = User.query.filter(User.id != current_user.id).all()
-                user_ids = [u.id for u in all_users]
-                if user_ids:
-                    Notification.send_announcement_notification(announcement, user_ids)
-            elif send_to == 'students_only' and current_user.role in ['admin', 'leader']:
-                from models.user import User
-                students = User.query.filter(User.role == 'student', User.id != current_user.id).all()
-                user_ids = [u.id for u in students]
-                if user_ids:
-                    Notification.send_announcement_notification(announcement, user_ids)
+        if request.method == 'POST':
+            send_to = request.form.get('send_to', 'club_members')
+            club_id = request.form.get('club_id')
+            title = request.form.get('title')
+            content = request.form.get('content')
+            priority = request.form.get('priority', 'normal')
+            pinned = request.form.get('pinned') == 'on'
+            
+            print(f"🔍 Form data: send_to={send_to}, club_id={club_id}, title={title}")
+            
+            if send_to == 'club_members':
+                if not club_id:
+                    flash('Please select a club', 'danger')
+                    return redirect('/announcements/create')
+            elif send_to == 'students_only':
+                if not club_id:
+                    club = Club.query.filter(Club.status == 'active').first()
+                    if club:
+                        club_id = str(club.id)
+                    else:
+                        flash('No active clubs available', 'danger')
+                        return redirect('/announcements/create')
             else:
-                members = Membership.query.filter_by(club_id=club_id, status='active').all()
-                user_ids = [m.user_id for m in members if m.user_id != current_user.id]
-                if user_ids:
-                    Notification.send_announcement_notification(announcement, user_ids)
-        except Exception as e:
-            print(f"Error sending notifications: {e}")
+                if not club_id:
+                    club = Club.query.filter(Club.status == 'active').first()
+                    if club:
+                        club_id = str(club.id)
+                    else:
+                        flash('No active clubs available', 'danger')
+                        return redirect('/announcements/create')
+            
+            if not title or not content:
+                flash('Title and content are required', 'danger')
+                return redirect('/announcements/create')
+            
+            # Validate club exists
+            club = Club.query.get(club_id)
+            if not club:
+                flash('Club not found', 'danger')
+                return redirect('/announcements/create')
+            
+            print(f"🔍 Using club: {club.club_name} (ID: {club.id})")
+            
+            resource_links = request.form.get('resource_links', '')
+            resource_links_json = None
+            if resource_links:
+                try:
+                    links = [l.strip() for l in resource_links.split('\n') if l.strip()]
+                    resource_links_json = json.dumps(links)
+                    print(f"🔍 Resource links: {links}")
+                except Exception as e:
+                    print(f"⚠️ Error parsing resource links: {e}")
+                    resource_links_json = None
+            
+            attachment_url = None
+            attachment_name = None
+            if 'attachment' in request.files:
+                file = request.files['attachment']
+                if file.filename:
+                    filename = secure_filename(file.filename)
+                    upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'announcements')
+                    os.makedirs(upload_folder, exist_ok=True)
+                    filepath = os.path.join(upload_folder, f"{datetime.now().timestamp()}_{filename}")
+                    file.save(filepath)
+                    attachment_url = f"static/uploads/announcements/{os.path.basename(filepath)}"
+                    attachment_name = file.filename
+                    print(f"🔍 Attachment saved: {attachment_url}")
+            
+            announcement = Announcement(
+                club_id=int(club_id),
+                created_by=current_user.id,
+                title=title,
+                content=content,
+                priority=priority,
+                pinned=pinned,
+                attachment_url=attachment_url,
+                attachment_name=attachment_name,
+                resource_links=resource_links_json
+            )
+            
+            print(f"🔍 Creating announcement: {announcement.title}")
+            db.session.add(announcement)
+            db.session.commit()
+            print(f"✅ Announcement created successfully with ID: {announcement.id}")
+            
+            try:
+                if send_to == 'all_users' and current_user.role == 'admin':
+                    from models.user import User
+                    all_users = User.query.filter(User.id != current_user.id).all()
+                    user_ids = [u.id for u in all_users]
+                    if user_ids:
+                        Notification.send_announcement_notification(announcement, user_ids)
+                elif send_to == 'students_only' and current_user.role in ['admin', 'leader']:
+                    from models.user import User
+                    students = User.query.filter(User.role == 'student', User.id != current_user.id).all()
+                    user_ids = [u.id for u in students]
+                    if user_ids:
+                        Notification.send_announcement_notification(announcement, user_ids)
+                else:
+                    members = Membership.query.filter_by(club_id=club_id, status='active').all()
+                    user_ids = [m.user_id for m in members if m.user_id != current_user.id]
+                    if user_ids:
+                        Notification.send_announcement_notification(announcement, user_ids)
+            except Exception as e:
+                print(f"⚠️ Error sending notifications: {e}")
+            
+            flash('Announcement created successfully!', 'success')
+            return redirect(f'/announcements/{announcement.id}')
         
-        flash('Announcement created successfully!', 'success')
-        return redirect(f'/announcements/{announcement.id}')
-    
-    # Show all clubs for admin (including pending ones), active clubs for others
-    if current_user.role == 'admin':
-        clubs = Club.query.all()
-    else:
-        clubs = Club.query.filter(Club.status == 'active').all()
-    
-    return render_template('announcements/create.html', form=form, clubs=clubs)
+        # Show all clubs for admin (including pending ones), active clubs for others
+        if current_user.role == 'admin':
+            clubs = Club.query.all()
+        else:
+            clubs = Club.query.filter(Club.status == 'active').all()
+        
+        return render_template('announcements/create.html', form=form, clubs=clubs)
+        
+    except Exception as e:
+        print(f"❌ Announcement creation error: {e}")
+        import traceback
+        print(f"❌ Full traceback: {traceback.format_exc()}")
+        flash('Error creating announcement. Please try again.', 'danger')
+        return redirect('/announcements/create')
 
 @announcements_bp.route('/<int:announcement_id>')
 @login_required
 def detail(announcement_id):
     """View announcement details"""
-    announcement = Announcement.query.get_or_404(announcement_id)
-    club = Club.query.get(announcement.club_id)
-    
-    if current_user.role == 'student':
-        membership = Membership.query.filter_by(
-            user_id=current_user.id, 
-            club_id=announcement.club_id, 
-            status='active'
-        ).first()
-        if not membership and club.created_by != current_user.id:
-            flash("You do not have access to this announcement", 'warning')
-            return redirect('/announcements')
-    
-    comments = AnnouncementComment.query.filter_by(announcement_id=announcement_id).order_by(
-        AnnouncementComment.created_at.asc()
-    ).all()
-    
-    user_reaction = announcement.get_user_reaction(current_user.id)
-    reactions_count = announcement.get_reactions_count()
-    
-    # Parse resource links from JSON
-    resource_links = []
-    if announcement.resource_links:
-        try:
-            import json
-            resource_links = json.loads(announcement.resource_links)
-        except:
-            resource_links = []
-    
-    return render_template('announcements/detail.html', 
-                         announcement=announcement,
-                         club=club,
-                         comments=comments,
-                         user_reaction=user_reaction,
-                         reactions_count=reactions_count,
-                         resource_links=resource_links)
+    try:
+        print(f"🔍 Viewing announcement {announcement_id}")
+        
+        announcement = Announcement.query.get_or_404(announcement_id)
+        club = Club.query.get(announcement.club_id)
+        
+        print(f"🔍 Found announcement: {announcement.title}")
+        print(f"🔍 Club: {club.club_name if club else 'None'}")
+        
+        if current_user.role == 'student':
+            membership = Membership.query.filter_by(
+                user_id=current_user.id, 
+                club_id=announcement.club_id, 
+                status='active'
+            ).first()
+            if not membership and club.created_by != current_user.id:
+                flash("You do not have access to this announcement", 'warning')
+                return redirect('/announcements')
+        
+        comments = AnnouncementComment.query.filter_by(announcement_id=announcement_id).order_by(
+            AnnouncementComment.created_at.asc()
+        ).all()
+        
+        user_reaction = announcement.get_user_reaction(current_user.id)
+        reactions_count = announcement.get_reactions_count()
+        
+        # Parse resource links from JSON
+        resource_links = []
+        if announcement.resource_links:
+            try:
+                import json
+                resource_links = json.loads(announcement.resource_links)
+                print(f"🔍 Parsed {len(resource_links)} resource links")
+            except Exception as e:
+                print(f"⚠️ Error parsing resource links: {e}")
+                resource_links = []
+        
+        print(f"✅ Rendering announcement detail template")
+        return render_template('announcements/detail.html', 
+                             announcement=announcement,
+                             club=club,
+                             comments=comments,
+                             user_reaction=user_reaction,
+                             reactions_count=reactions_count,
+                             resource_links=resource_links)
+        
+    except Exception as e:
+        print(f"❌ Announcement detail error: {e}")
+        import traceback
+        print(f"❌ Full traceback: {traceback.format_exc()}")
+        flash('Error loading announcement. Please try again.', 'danger')
+        return redirect('/announcements')
 
 @announcements_bp.route('/<int:announcement_id>/edit', methods=['GET', 'POST'])
 @login_required
