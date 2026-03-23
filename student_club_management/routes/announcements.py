@@ -10,7 +10,7 @@ import json
 import os
 from werkzeug.utils import secure_filename
 from flask import current_app
-from sqlalchemy import select, func, not_
+from sqlalchemy import select, func
 
 announcements_bp = Blueprint('announcements', __name__, url_prefix='/announcements')
 

@@ -32,7 +32,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
               {% if current_user.role == 'admin' %}
-                <li><a class="dropdown-item" href="/dashboard/admin">⚙️ Admin Panel</a></li>
+                <li><a class="dropdown-item" href="/admin/">⚙️ Admin Panel</a></li>
               {% elif current_user.role == 'leader' %}
                 <li><a class="dropdown-item" href="/dashboard/leader">👔 Leader Dashboard</a></li>
               {% else %}
