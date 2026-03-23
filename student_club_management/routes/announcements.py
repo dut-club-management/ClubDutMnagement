@@ -287,7 +287,7 @@ def detail(announcement_id):
 def edit(announcement_id):
     """Edit an announcement"""
     try:
-        print(f"🔍 Announcement edit: Starting edit of announcement {announcement_id}")
+        print(f"🔍 Announcement edit: Starting edit of announcement {announcement_id} - v2.0")
         
         announcement = Announcement.query.get_or_404(announcement_id)
         club = Club.query.get(announcement.club_id)
