@@ -15,6 +15,16 @@ def analytics_dashboard():
         return 'Unauthorized', 403
     
     try:
+        # Check if analytics data exists, if not calculate it
+        analytics_count = Analytics.query.count()
+        
+        if analytics_count == 0:
+            print("No analytics data found - calculating initial data...")
+            AnalyticsService.calculate_membership_growth(30)
+            AnalyticsService.calculate_event_attendance(30)
+            AnalyticsService.calculate_participation_trends(30)
+            print("Initial analytics data calculated")
+        
         # Get dashboard summary
         summary = AnalyticsService.get_dashboard_summary()
         
@@ -72,7 +82,51 @@ def refresh_analytics():
         
         return jsonify({'success': True, 'message': 'Analytics refreshed successfully'})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Analytics Refresh Error: {e}")
+        print(f"Full traceback: {error_details}")
+        return jsonify({'error': str(e), 'details': error_details}), 500
+
+@analytics_bp.route('/api/calculate')
+@login_required
+def calculate_analytics():
+    """Force calculate analytics data immediately"""
+    if current_user.role != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    try:
+        print("Manual analytics calculation triggered...")
+        
+        # Clear existing analytics data
+        from models.analytics import Analytics
+        Analytics.query.delete()
+        db.session.commit()
+        
+        # Calculate fresh analytics
+        membership_result = AnalyticsService.calculate_membership_growth(30)
+        attendance_result = AnalyticsService.calculate_event_attendance(30)
+        participation_result = AnalyticsService.calculate_participation_trends(30)
+        
+        # Get fresh summary
+        summary = AnalyticsService.get_dashboard_summary()
+        
+        return jsonify({
+            'success': True, 
+            'message': 'Analytics calculated successfully',
+            'summary': summary,
+            'calculations': {
+                'membership_growth': str(membership_result),
+                'event_attendance': str(attendance_result),
+                'participation_trends': str(participation_result)
+            }
+        })
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Analytics Calculation Error: {e}")
+        print(f"Full traceback: {error_details}")
+        return jsonify({'error': str(e), 'details': error_details}), 500
 
 @analytics_bp.route('/api/send-reminders')
 @login_required
