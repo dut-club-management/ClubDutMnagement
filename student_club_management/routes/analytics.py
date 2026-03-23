@@ -14,19 +14,48 @@ def analytics_dashboard():
     if current_user.role != 'admin':
         return 'Unauthorized', 403
     
-    # Get dashboard summary
-    summary = AnalyticsService.get_dashboard_summary()
+    try:
+        # Get dashboard summary
+        summary = AnalyticsService.get_dashboard_summary()
+        
+        # Get trend data
+        membership_growth = AnalyticsService.get_analytics_data('membership_growth', 30)
+        event_attendance = AnalyticsService.get_analytics_data('event_attendance', 30)
+        participation_trends = AnalyticsService.get_analytics_data('participation', 30)
+        
+        return render_template('analytics/dashboard.html',
+                             summary=summary,
+                             membership_growth=membership_growth,
+                             event_attendance=event_attendance,
+                             participation_trends=participation_trends)
     
-    # Get trend data
-    membership_growth = AnalyticsService.get_analytics_data('membership_growth', 30)
-    event_attendance = AnalyticsService.get_analytics_data('event_attendance', 30)
-    participation_trends = AnalyticsService.get_analytics_data('participation', 30)
-    
-    return render_template('analytics/dashboard.html',
-                         summary=summary,
-                         membership_growth=membership_growth,
-                         event_attendance=event_attendance,
-                         participation_trends=participation_trends)
+    except Exception as e:
+        # Log the error for debugging
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Analytics Dashboard Error: {e}")
+        print(f"Full traceback: {error_details}")
+        
+        # Return a simple fallback dashboard
+        try:
+            fallback_summary = {
+                'total_counts': {'users': 0, 'clubs': 0, 'events': 0, 'memberships': 0},
+                'recent_activity': {'new_users': 0, 'new_clubs': 0, 'new_events': 0, 'new_memberships': 0, 'recent_attendance': 0, 'upcoming_events': 0},
+                'club_status': {'active': 0, 'pending': 0},
+                'recent_events_attendance': []
+            }
+            
+            fallback_membership_growth = {'labels': [], 'data': []}
+            fallback_event_attendance = {'labels': [], 'data': []}
+            fallback_participation_trends = {'labels': [], 'data': []}
+            
+            return render_template('analytics/dashboard.html',
+                                 summary=fallback_summary,
+                                 membership_growth=fallback_membership_growth,
+                                 event_attendance=fallback_event_attendance,
+                                 participation_trends=fallback_participation_trends)
+        except Exception as fallback_error:
+            return f"Analytics Dashboard Error: {str(e)}<br>Fallback Error: {str(fallback_error)}", 500
 
 @analytics_bp.route('/api/refresh')
 @login_required
