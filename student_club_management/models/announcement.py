@@ -3,13 +3,16 @@ from datetime import datetime
 
 class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=False)
+    club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=True)  # Make nullable for all_users announcements
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String(140), nullable=False)
     content = db.Column(db.Text, nullable=False)
     priority = db.Column(db.String(16), nullable=False, default='normal')
     pinned = db.Column(db.Boolean, default=False)
     expiry_date = db.Column(db.DateTime, nullable=True)
+    
+    # Audience targeting
+    send_to = db.Column(db.String(20), nullable=False, default='club_members')  # club_members, all_users, students_only
     
     # Attachments and links support
     attachment_url = db.Column(db.String(500), nullable=True)

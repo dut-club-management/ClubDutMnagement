@@ -18,22 +18,36 @@ announcements_bp = Blueprint('announcements', __name__, url_prefix='/announcemen
 @announcements_bp.route('/')
 @login_required
 def index():
-    """Show all announcements for current user based on their club memberships"""
+    """Show all announcements for current user based on their role and announcement audience"""
     if current_user.role == 'admin':
+        # Admins see all announcements
         announcements = Announcement.query.order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
     elif current_user.role == 'leader':
-        # Show all announcements from all active clubs for any leader
+        # Leaders see all announcements from all active clubs and all_users announcements
         active_clubs = Club.query.filter(Club.status == 'active').all()
         club_ids = [c.id for c in active_clubs]
-        announcements = Announcement.query.filter(Announcement.club_id.in_(club_ids)).order_by(
-            Announcement.pinned.desc(), Announcement.created_at.desc()
-        ).all()
+        announcements = Announcement.query.filter(
+            db.or_(
+                Announcement.club_id.in_(club_ids),
+                Announcement.send_to.in_(['all_users', 'students_only'])
+            )
+        ).order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
     else:
+        # Students see announcements based on send_to field
         memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
         club_ids = [m.club_id for m in memberships]
-        announcements = Announcement.query.filter(Announcement.club_id.in_(club_ids)).order_by(
-            Announcement.pinned.desc(), Announcement.created_at.desc()
-        ).all()
+        
+        # Students see: club_members announcements from their clubs, all_users announcements, students_only announcements
+        announcements = Announcement.query.filter(
+            db.or_(
+                Announcement.send_to == 'all_users',
+                Announcement.send_to == 'students_only',
+                db.and_(
+                    Announcement.send_to == 'club_members',
+                    Announcement.club_id.in_(club_ids)
+                )
+            )
+        ).order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
     
     return render_template('announcements/index.html', announcements=announcements)
 
@@ -43,26 +57,43 @@ def unread_count():
     """Get count of unread announcements for real-time badge updates"""
     try:
         if current_user.role == 'admin':
-            club_ids = [c.id for c in Club.query.all()]
+            # Admins see all announcements
+            announcements = Announcement.query.order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
         elif current_user.role == 'leader':
-            # Show all active clubs for any leader
+            # Leaders see all announcements from all active clubs and all_users announcements
             active_clubs = Club.query.filter(Club.status == 'active').all()
             club_ids = [c.id for c in active_clubs]
+            announcements = Announcement.query.filter(
+                db.or_(
+                    Announcement.club_id.in_(club_ids),
+                    Announcement.send_to.in_(['all_users', 'students_only'])
+                )
+            ).order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
         else:
+            # Students see announcements based on send_to field
             memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
             club_ids = [m.club_id for m in memberships]
+            
+            # Students see: club_members announcements from their clubs, all_users announcements, students_only announcements
+            announcements = Announcement.query.filter(
+                db.or_(
+                    Announcement.send_to == 'all_users',
+                    Announcement.send_to == 'students_only',
+                    db.and_(
+                        Announcement.send_to == 'club_members',
+                        Announcement.club_id.in_(club_ids)
+                    )
+                )
+            ).order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
         
-        if not club_ids:
+        if not announcements:
             return jsonify({'count': 0})
         
         read_receipts = db.session.query(AnnouncementNotification.announcement_id).filter(
             AnnouncementNotification.user_id == current_user.id
         ).subquery()
         
-        unread_count = db.session.query(func.count(Announcement.id)).filter(
-            Announcement.club_id.in_(club_ids),
-            ~Announcement.id.in_(select(read_receipts))
-        ).scalar() or 0
+        unread_count = len([a for a in announcements if a.id not in read_receipts])
         
         return jsonify({'count': unread_count})
     except Exception as e:
@@ -111,38 +142,49 @@ def create():
             
             print(f"🔍 Form data: send_to={send_to}, club_id={club_id}, title={title}")
             
+            # Handle club_id based on send_to option
+            final_club_id = None
             if send_to == 'club_members':
                 if not club_id:
                     flash('Please select a club', 'danger')
                     return redirect('/announcements/create')
+                final_club_id = int(club_id)
             elif send_to == 'students_only':
-                if not club_id:
-                    club = Club.query.filter(Club.status == 'active').first()
-                    if club:
-                        club_id = str(club.id)
-                    else:
-                        flash('No active clubs available', 'danger')
-                        return redirect('/announcements/create')
+                # For students_only, still need a club for context, but use first active club
+                club = Club.query.filter(Club.status == 'active').first()
+                if club:
+                    final_club_id = club.id
+                else:
+                    flash('No active clubs available', 'danger')
+                    return redirect('/announcements/create')
+            elif send_to == 'all_users':
+                # For all_users, club_id can be None
+                final_club_id = None
             else:
+                # Default to club_members behavior
                 if not club_id:
                     club = Club.query.filter(Club.status == 'active').first()
                     if club:
-                        club_id = str(club.id)
+                        final_club_id = club.id
                     else:
                         flash('No active clubs available', 'danger')
                         return redirect('/announcements/create')
+                else:
+                    final_club_id = int(club_id)
             
             if not title or not content:
                 flash('Title and content are required', 'danger')
                 return redirect('/announcements/create')
             
-            # Validate club exists
-            club = Club.query.get(club_id)
-            if not club:
-                flash('Club not found', 'danger')
-                return redirect('/announcements/create')
-            
-            print(f"🔍 Using club: {club.club_name} (ID: {club.id})")
+            if final_club_id:
+                # Validate club exists if club_id is specified
+                club = Club.query.get(final_club_id)
+                if not club:
+                    flash('Club not found', 'danger')
+                    return redirect('/announcements/create')
+                print(f"🔍 Using club: {club.club_name} (ID: {club.id})")
+            else:
+                print(f"🔍 Creating announcement for all users")
             
             resource_links = request.form.get('resource_links', '')
             resource_links_json = None
@@ -170,12 +212,13 @@ def create():
                     print(f"🔍 Attachment saved: {attachment_url}")
             
             announcement = Announcement(
-                club_id=int(club_id),
+                club_id=final_club_id,
                 created_by=current_user.id,
                 title=title,
                 content=content,
                 priority=priority,
                 pinned=pinned,
+                send_to=send_to,
                 attachment_url=attachment_url,
                 attachment_name=attachment_name,
                 resource_links=resource_links_json
