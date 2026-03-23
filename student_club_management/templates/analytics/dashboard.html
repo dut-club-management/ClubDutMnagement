@@ -3,515 +3,307 @@
 
 {% block extra_css %}
 <style>
-/* Modern Analytics Dashboard Styles */
+/* Clean Analytics Dashboard */
 .analytics-dashboard {
   padding: 2rem 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   color: white;
-  position: relative;
-  overflow-x: hidden;
 }
 
-/* Animated background particles */
-.analytics-dashboard::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-              radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
-  animation: float 20s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(30px, -30px) rotate(120deg); }
-  66% { transform: translate(-20px, 20px) rotate(240deg); }
-}
-
-/* Header Section */
+/* Header */
 .analytics-header {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border-radius: 25px;
-  padding: 2.5rem;
-  margin-bottom: 2.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  position: relative;
-  z-index: 10;
-  overflow: hidden;
-}
-
-.analytics-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
 }
 
 .analytics-title {
-  font-size: 2.8rem;
-  font-weight: 800;
+  font-size: 2.5rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
-  background: linear-gradient(45deg, #fff, #f0f0f0, #fff);
+  background: linear-gradient(45deg, #fff, #f0f0f0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-  position: relative;
-  z-index: 2;
 }
 
 .analytics-subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   opacity: 0.9;
   margin: 0;
-  font-weight: 300;
-  position: relative;
-  z-index: 2;
 }
 
-/* Action Buttons - Removed to prevent errors */
-
-/* Stats Cards */
+/* Stats Grid */
 .stats-grid {
-  margin-bottom: 2.5rem;
-  position: relative;
-  z-index: 10;
+  margin-bottom: 2rem;
 }
 
-.stat-card-analytics {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
-  border-radius: 25px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+.stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   height: 100%;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.stat-card-analytics::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.stat-card-analytics::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-}
-
-.stat-card-analytics:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15),
-              0 10px 20px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.35);
-}
-
-.stat-icon-analytics {
-  font-size: 3rem;
-  margin-bottom: 1.2rem;
-  position: relative;
-  z-index: 2;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-}
-
-.stat-info-analytics {
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
   position: relative;
   z-index: 2;
 }
 
-.stat-number-analytics {
-  font-size: 2.8rem;
-  font-weight: 800;
+.stat-info {
+  position: relative;
+  z-index: 2;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
   margin: 0;
   color: white;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  line-height: 1.2;
 }
 
-.stat-label-analytics {
-  font-size: 1rem;
+.stat-label {
+  font-size: 0.9rem;
   opacity: 0.9;
-  margin: 0.6rem 0 0 0;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  margin: 0.5rem 0 0 0;
 }
 
 .stat-change {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   opacity: 0.8;
   margin: 0;
-  font-weight: 400;
 }
 
-.stat-bg-analytics {
+.stat-bg {
   position: absolute;
-  top: -30px;
-  right: -30px;
-  font-size: 5rem;
-  opacity: 0.08;
+  top: -20px;
+  right: -20px;
+  font-size: 4rem;
+  opacity: 0.1;
   z-index: 1;
-  transform: rotate(-15deg);
 }
 
 /* Chart Cards */
 .chart-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
-  border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   height: 100%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  position: relative;
-  z-index: 10;
-}
-
-.chart-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
 }
 
 .chart-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15),
-              0 10px 20px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
 .chart-header {
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
-  padding: 1.8rem;
+  padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-}
-
-.chart-header::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
 }
 
 .chart-header h4 {
   margin: 0;
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 600;
   color: white;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .chart-body {
-  padding: 2rem;
-  position: relative;
+  padding: 1.5rem;
 }
 
 /* Activity Stats */
 .activity-stats {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
 .stat-item {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  padding: 1.2rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.6s ease;
-}
-
-.stat-item:hover::before {
-  left: 100%;
+  gap: 1rem;
+  transition: all 0.3s ease;
 }
 
 .stat-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateX(8px) scale(1.02);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
 }
 
 .stat-item-icon {
-  font-size: 1.8rem;
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.15);
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
 }
 
 .stat-item-text {
   flex: 1;
   font-weight: 600;
   color: white;
-  font-size: 0.95rem;
 }
 
-/* Club Status Cards */
+/* Club Status */
 .status-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .status-item {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.status-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: all 0.3s ease;
 }
 
 .status-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-5px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
 }
 
 .status-number {
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 700;
   margin: 0;
   color: white;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .status-label {
   font-size: 0.9rem;
   opacity: 0.8;
-  margin: 0.8rem 0 0 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 500;
+  margin: 0.5rem 0 0 0;
 }
 
-/* Event Attendance Cards */
+/* Event Attendance */
 .event-attendance-card {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
   height: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-.event-attendance-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
 }
 
 .event-attendance-card:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-5px) scale(1.02);
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
 }
 
 .event-attendance-card h5 {
   color: white;
-  font-weight: 700;
-  margin-bottom: 0.8rem;
-  font-size: 1.2rem;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
 .event-date {
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 1.2rem;
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
 
 .attendance-summary {
-  background: rgba(102, 126, 234, 0.25);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 0.8rem 1.5rem;
-  margin-bottom: 1.5rem;
+  background: rgba(102, 126, 234, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
   display: inline-block;
-  border: 1px solid rgba(102, 126, 234, 0.3);
 }
 
 .attendance-count {
   color: white;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 600;
 }
 
 .attendees-list h6 {
   color: white;
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
   opacity: 0.9;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .attendee-item {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 0.8rem;
-  margin-bottom: 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.8rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 0.5rem;
 }
 
 .attendee-item:hover {
   background: rgba(255, 255, 255, 0.1);
-  transform: translateX(5px);
 }
 
 .attendee-name {
   color: white;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .attendee-email {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   flex: 1;
 }
 
 .checkin-time {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 8px;
+  font-size: 0.75rem;
 }
 
 .more-attendees {
   color: rgba(255, 255, 255, 0.6);
   text-align: center;
-  margin-top: 1rem;
-  font-style: italic;
+  margin-top: 0.5rem;
 }
 
 .no-attendees {
   color: rgba(255, 255, 255, 0.6);
   text-align: center;
-  margin-top: 1.5rem;
-  font-style: italic;
+  margin-top: 1rem;
 }
 
 /* Chart Styling */
 canvas {
   max-height: 300px;
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.02);
-  padding: 10px;
-}
-
-/* Section Separators */
-.section-separator {
-  height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  margin: 3rem 0;
-  border-radius: 2px;
-  position: relative;
-}
-
-.section-separator::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 2px;
+  border-radius: 10px;
 }
 
 /* Responsive */
@@ -521,27 +313,19 @@ canvas {
   }
   
   .analytics-header {
-    padding: 2rem;
-    margin-bottom: 2rem;
+    padding: 1.5rem;
   }
   
   .analytics-title {
-    font-size: 2.2rem;
+    font-size: 2rem;
   }
   
-  .btn-refresh, .btn-reminders {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
-    margin-left: 0.5rem;
-  }
-  
-  .stat-number-analytics {
-    font-size: 2.2rem;
+  .stat-number {
+    font-size: 2rem;
   }
   
   .chart-header {
     text-align: center;
-    padding: 1.5rem;
   }
   
   .status-grid {
@@ -551,19 +335,6 @@ canvas {
   .attendee-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .attendee-email {
-    font-size: 0.75rem;
-  }
-  
-  .checkin-time {
-    font-size: 0.75rem;
-  }
-  
-  .chart-body {
-    padding: 1.5rem;
   }
 }
 </style>
@@ -574,66 +345,59 @@ canvas {
 
 <!-- Header -->
 <div class="analytics-header">
-  <div class="row align-items-center">
-    <div class="col-12">
-      <h1 class="analytics-title">📊 Analytics Dashboard</h1>
-      <p class="analytics-subtitle">Real-time insights into club activities and engagement</p>
-    </div>
-  </div>
+  <h1 class="analytics-title">📊 Analytics Dashboard</h1>
+  <p class="analytics-subtitle">Real-time insights into club activities and engagement</p>
 </div>
 
 <!-- Summary Cards -->
 <div class="stats-grid">
   <div class="row g-4">
     <div class="col-md-6 col-lg-3">
-      <div class="stat-card-analytics">
-        <div class="stat-icon-analytics">👥</div>
-        <div class="stat-info-analytics">
-          <h3 class="stat-number-analytics">{{ summary.total_counts.users }}</h3>
-          <p class="stat-label-analytics">Total Users</p>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <h3 class="stat-number">{{ summary.total_counts.users }}</h3>
+          <p class="stat-label">Total Users</p>
           <p class="stat-change">+{{ summary.recent_activity.new_users }} this month</p>
         </div>
-        <div class="stat-bg-analytics">👥</div>
+        <div class="stat-bg">👥</div>
       </div>
     </div>
     <div class="col-md-6 col-lg-3">
-      <div class="stat-card-analytics">
-        <div class="stat-icon-analytics">🏛️</div>
-        <div class="stat-info-analytics">
-          <h3 class="stat-number-analytics">{{ summary.total_counts.clubs }}</h3>
-          <p class="stat-label-analytics">Total Clubs</p>
+      <div class="stat-card">
+        <div class="stat-icon">🏛️</div>
+        <div class="stat-info">
+          <h3 class="stat-number">{{ summary.total_counts.clubs }}</h3>
+          <p class="stat-label">Total Clubs</p>
           <p class="stat-change">+{{ summary.recent_activity.new_clubs }} this month</p>
         </div>
-        <div class="stat-bg-analytics">🏛️</div>
+        <div class="stat-bg">🏛️</div>
       </div>
     </div>
     <div class="col-md-6 col-lg-3">
-      <div class="stat-card-analytics">
-        <div class="stat-icon-analytics">📅</div>
-        <div class="stat-info-analytics">
-          <h3 class="stat-number-analytics">{{ summary.total_counts.events }}</h3>
-          <p class="stat-label-analytics">Total Events</p>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <h3 class="stat-number">{{ summary.total_counts.events }}</h3>
+          <p class="stat-label">Total Events</p>
           <p class="stat-change">+{{ summary.recent_activity.new_events }} this month</p>
         </div>
-        <div class="stat-bg-analytics">📅</div>
+        <div class="stat-bg">📅</div>
       </div>
     </div>
     <div class="col-md-6 col-lg-3">
-      <div class="stat-card-analytics">
-        <div class="stat-icon-analytics">🤝</div>
-        <div class="stat-info-analytics">
-          <h3 class="stat-number-analytics">{{ summary.total_counts.memberships }}</h3>
-          <p class="stat-label-analytics">Total Memberships</p>
+      <div class="stat-card">
+        <div class="stat-icon">🤝</div>
+        <div class="stat-info">
+          <h3 class="stat-number">{{ summary.total_counts.memberships }}</h3>
+          <p class="stat-label">Total Memberships</p>
           <p class="stat-change">+{{ summary.recent_activity.new_memberships }} this month</p>
         </div>
-        <div class="stat-bg-analytics">🤝</div>
+        <div class="stat-bg">🤝</div>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Section Separator -->
-<div class="section-separator"></div>
 
 <!-- Charts Row -->
 <div class="row g-4 mb-4">
@@ -671,9 +435,6 @@ canvas {
     </div>
   </div>
 </div>
-
-<!-- Section Separator -->
-<div class="section-separator"></div>
 
 <!-- Status and Activity -->
 <div class="row g-4">
@@ -724,9 +485,6 @@ canvas {
     </div>
   </div>
 </div>
-
-<!-- Section Separator -->
-<div class="section-separator"></div>
 
 <!-- Event Attendance Details -->
 <div class="row g-4">
@@ -842,15 +600,15 @@ const membershipCtx = document.getElementById('membershipChart').getContext('2d'
 new Chart(membershipCtx, {
     type: 'line',
     data: {
-        labels: [{% for record in membership_growth %}'{{ record.metric_date.strftime('%m/%d') }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        labels: {{ membership_growth.labels|tojson }},
         datasets: [{
             label: 'New Memberships',
-            data: [{% for record in membership_growth %}{{ record.metric_value }}{% if not loop.last %},{% endif %}{% endfor %}],
+            data: {{ membership_growth.data|tojson }},
             borderColor: '#667eea',
-            backgroundColor: 'rgba(102,126,234,0.1)',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
             borderWidth: 3,
-            tension: 0.4,
             fill: true,
+            tension: 0.4,
             pointBackgroundColor: '#667eea',
             pointBorderColor: '#fff',
             pointBorderWidth: 2,
@@ -866,15 +624,15 @@ const attendanceCtx = document.getElementById('attendanceChart').getContext('2d'
 new Chart(attendanceCtx, {
     type: 'bar',
     data: {
-        labels: [{% for record in event_attendance %}'{{ record.metric_date.strftime('%m/%d') }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        labels: {{ event_attendance.labels|tojson }},
         datasets: [{
             label: 'Event Attendance',
-            data: [{% for record in event_attendance %}{{ record.metric_value }}{% if not loop.last %},{% endif %}{% endfor %}],
-            backgroundColor: 'rgba(16,185,129,0.8)',
-            borderColor: '#10b981',
+            data: {{ event_attendance.data|tojson }},
+            backgroundColor: 'rgba(118, 75, 162, 0.6)',
+            borderColor: '#764ba2',
             borderWidth: 2,
             borderRadius: 8,
-            hoverBackgroundColor: 'rgba(16,185,129,1)'
+            hoverBackgroundColor: 'rgba(118, 75, 162, 0.8)'
         }]
     },
     options: chartConfig
@@ -885,16 +643,16 @@ const participationCtx = document.getElementById('participationChart').getContex
 new Chart(participationCtx, {
     type: 'line',
     data: {
-        labels: [{% for record in participation_trends %}'{{ record.metric_date.strftime('%m/%d') }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        labels: {{ participation_trends.labels|tojson }},
         datasets: [{
-            label: 'Overall Participation',
-            data: [{% for record in participation_trends %}{{ record.metric_value }}{% if not loop.last %},{% endif %}{% endfor %}],
-            borderColor: '#764ba2',
-            backgroundColor: 'rgba(118,75,162,0.1)',
+            label: 'Event Participation',
+            data: {{ participation_trends.data|tojson }},
+            borderColor: '#f093fb',
+            backgroundColor: 'rgba(240, 147, 251, 0.1)',
             borderWidth: 3,
-            tension: 0.4,
             fill: true,
-            pointBackgroundColor: '#764ba2',
+            tension: 0.4,
+            pointBackgroundColor: '#f093fb',
             pointBorderColor: '#fff',
             pointBorderWidth: 2,
             pointRadius: 5,
