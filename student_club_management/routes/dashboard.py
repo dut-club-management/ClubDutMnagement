@@ -60,6 +60,8 @@ def leader_dashboard():
 def admin_dashboard():
     if current_user.role != 'admin':
         return 'Unauthorized', 403
+    # Redirect to the new admin panel
+    return redirect('/admin/')
     
     try:
         total_users = User.query.count()
