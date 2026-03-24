@@ -1,0 +1,298 @@
+/* Enhanced Mobile Responsiveness */
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .navbar-nav {
+        text-align: center;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.5rem 1rem;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        float: none;
+        width: 100%;
+    }
+}
+
+/* Mobile Dashboard */
+@media (max-width: 768px) {
+    .dashboard-stats .card {
+        margin-bottom: 1rem;
+    }
+    
+    .dashboard-stats .card-body {
+        padding: 1rem;
+    }
+    
+    .dashboard-stats h4 {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-stats p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile Cards */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .card-text {
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile Tables */
+@media (max-width: 768px) {
+    .table {
+        font-size: 0.8rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem;
+        vertical-align: middle;
+    }
+    
+    .table .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Mobile Forms */
+@media (max-width: 768px) {
+    .form-control,
+    .form-select {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn {
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        width: auto;
+    }
+}
+
+/* Mobile Modals */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+        max-width: 100%;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .modal-header,
+    .modal-footer {
+        padding: 1rem;
+    }
+}
+
+/* Mobile Announcements */
+@media (max-width: 768px) {
+    .announcement-card .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .announcement-card .card-header .badge {
+        margin-bottom: 0.5rem;
+    }
+    
+    .announcement-card .card-body {
+        padding: 1rem;
+    }
+    
+    .announcement-card .btn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}
+
+/* Mobile Club Cards */
+@media (max-width: 768px) {
+    .club-card {
+        margin-bottom: 1rem;
+    }
+    
+    .club-card .card-body {
+        text-align: center;
+    }
+    
+    .club-card .club-stats {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    .club-card .club-stats .stat {
+        margin: 0 0.5rem;
+    }
+}
+
+/* Mobile Search */
+@media (max-width: 768px) {
+    .search-container {
+        margin-bottom: 1rem;
+    }
+    
+    .search-container .form-control {
+        margin-bottom: 0.5rem;
+    }
+    
+    .search-container .btn {
+        width: 100%;
+    }
+}
+
+/* Mobile Footer */
+@media (max-width: 768px) {
+    .footer {
+        text-align: center;
+    }
+    
+    .footer .social-links {
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .footer .links {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .footer .links a {
+        margin: 0.25rem 0;
+    }
+}
+
+/* Mobile Accessibility */
+@media (max-width: 768px) {
+    .sr-only {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+    
+    .visually-hidden {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+}
+
+/* Mobile Touch Targets */
+@media (max-width: 768px) {
+    .btn,
+    .nav-link,
+    .dropdown-item,
+    .form-control,
+    .form-select {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .btn-sm {
+        min-height: 38px;
+        min-width: 38px;
+    }
+    
+    .btn-lg {
+        min-height: 50px;
+        min-width: 50px;
+    }
+}
+
+/* Mobile Animations */
+@media (max-width: 768px) {
+    .fade,
+    .slide,
+    .collapse {
+        transition-duration: 0.2s;
+    }
+    
+    .spinner-border {
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    .spinner-border-sm {
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+}
+
+/* Mobile Print Styles */
+@media print and (max-width: 768px) {
+    .navbar,
+    .sidebar,
+    .btn,
+    .form-control,
+    .pagination {
+        display: none !important;
+    }
+    
+    .container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .card {
+        border: 1px solid #000;
+        margin-bottom: 1rem;
+        page-break-inside: avoid;
+    }
+    
+    .table {
+        font-size: 0.8rem;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+    }
+}
