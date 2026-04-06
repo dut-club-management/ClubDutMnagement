@@ -1,0 +1,88 @@
+# 🌐 VERCEL DEPLOYMENT - PRESENTATION READY
+
+## 🎯 Goal: Live URL for Tomorrow's Presentation (Railway Alternative)
+
+---
+
+## 📱 Step 1: Sign Up (2 Minutes)
+1. **Go to**: https://vercel.com
+2. **Click**: "Sign Up"
+3. **Use**: GitHub account (recommended)
+4. **Verify**: Email if required
+
+---
+
+## 🔗 Step 2: Import Project (3 Minutes)
+1. **Login**: Vercel dashboard
+2. **Click**: "Add New..." → "Project"
+3. **Select**: "Import Git Repository"
+4. **Choose**: `PHELELEKE/ClubDutMnagement` repo
+5. **Click**: "Import"
+
+---
+
+## ⚙️ Step 3: Configure (3 Minutes)
+1. **Framework**: "Other" (Vercel auto-detects)
+2. **Root Directory**: `student_club_management`
+3. **Build Command**: `pip install -r requirements.txt && python -c "from app import create_app; app = create_app(); app.run()"`
+4. **Output Directory**: `public` (if needed)
+5. **Environment Variables**:
+   ```
+   FLASK_APP=student_club_management.wsgi:app
+   FLASK_ENV=production
+   PORT=3000
+   ```
+
+---
+
+## 🚀 Step 4: Deploy (5 Minutes)
+1. **Click**: "Deploy"
+2. **Wait**: 3-5 minutes for build
+3. **Monitor**: Check deployment logs
+4. **Success**: Get live URL
+5. **Test**: Verify all features work
+
+---
+
+## 🌐 Expected Result:
+- **URL Format**: `https://club-management.vercel.app`
+- **Features**: All functionality working
+- **Performance**: Fast loading
+- **Mobile**: Responsive design
+- **SSL**: Secure connection
+
+---
+
+## 📺 Presentation Demo:
+1. **🔐 Login**: admin@dut.ac.za / admin@123
+2. **📝 Announcements**: Create with attachments
+3. **📎 Downloads**: Test file downloads
+4. **📊 Analytics**: View dashboard
+5. **🏛️ Clubs**: Demonstrate management
+6. **👥 Roles**: Show different user types
+
+---
+
+## 🔧 Vercel Configuration File:
+<tool_call>write_to_file
+<arg_key>CodeContent</arg_key>
+<arg_value>{
+  "version": 2,
+  "name": "club-management",
+  "builds": [
+    {
+      "src": "student_club_management/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "student_club_management/wsgi.py"
+    }
+  ],
+  "env": {
+    "FLASK_APP": "student_club_management.wsgi:app",
+    "FLASK_ENV": "production"
+  }
+}

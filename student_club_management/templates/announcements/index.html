@@ -372,12 +372,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Remove unread indicators
                     document.querySelectorAll('.unread-indicator').forEach(el => el.remove());
                     
-                    // Update badge count
-                    const badge = document.querySelector('.notification-badge');
-                    if (badge) {
-                        badge.textContent = '0';
-                        badge.style.display = 'none';
-                    }
+                    // Update navbar badge count
+                    const announcementBadges = document.querySelectorAll('.notification-badge');
+                    announcementBadges.forEach(badge => {
+                        // Check if this badge is for announcements (parent link href contains 'announcements')
+                        const parentLink = badge.closest('a');
+                        if (parentLink && parentLink.href.includes('announcements')) {
+                            badge.textContent = '0';
+                            badge.style.display = 'none';
+                        }
+                    });
                     
                     // Show success message
                     markAllReadBtn.textContent = '✓ Marked All Read';

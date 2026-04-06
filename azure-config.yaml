@@ -1,0 +1,122 @@
+# 🔵 AZURE DEPLOYMENT GUIDE - PRESENTATION READY
+
+## 🎯 Goal: Professional Live URL for Tomorrow's Presentation
+
+---
+
+## 📱 Step 1: Sign Up (3 Minutes)
+1. **Go to**: https://azure.microsoft.com
+2. **Click**: "Start free" or "Create free account"
+3. **Use**: Student email if available
+4. **Verify**: Phone number (required)
+5. **Get**: $200 free credit
+
+---
+
+## 🏛️ Step 2: Create App Service (5 Minutes)
+1. **Portal**: Go to Azure Portal
+2. **Search**: "App Services"
+3. **Click**: "+ Create"
+4. **Basics Tab**:
+   - **Subscription**: Free Trial
+   - **Resource Group**: Create new (club-management-rg)
+   - **Name**: club-management-app
+   - **Publish**: Code
+   - **Runtime stack**: Python 3.14
+   - **Operating System**: Linux
+   - **Region**: East US (or closest)
+
+5. **Next: Configure**:
+   - **Service Plan**: Free F1
+   - **Zone Redundancy**: Disabled
+
+6. **Review + Create**: Wait 2-3 minutes
+
+---
+
+## 🔗 Step 3: Configure Deployment (5 Minutes)
+1. **Go to**: Your new App Service
+2. **Deployment Center**: Left menu
+3. **Settings**: Configure deployment
+4. **GitHub Integration**:
+   - **Click**: "GitHub"
+   - **Authorize**: Azure to access GitHub
+   - **Select**: `PHELELEKE/ClubDutMnagement` repo
+   - **Branch**: main
+   - **Root Folder**: `student_club_management`
+
+5. **Deployment Settings**:
+   - **Build Action**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn student_club_management.wsgi:app`
+   - **Port**: 8000
+
+---
+
+## 🚀 Step 4: Deploy (3 Minutes)
+1. **Click**: "Deploy"
+2. **Wait**: 2-3 minutes for build
+3. **Monitor**: Check deployment logs
+4. **Success**: App goes live
+5. **Get URL**: `https://club-management-app.azurewebsites.net`
+
+---
+
+## 🌐 Step 5: Configure Environment (2 Minutes)
+1. **App Service**: Go to your app
+2. **Configuration**: Application settings
+3. **Environment Variables**:
+   ```
+   FLASK_APP=student_club_management.wsgi:app
+   FLASK_ENV=production
+   SECRET_KEY=your-secret-key-here
+   DATABASE_URL=your-database-url
+   ```
+4. **Save**: Restart application
+
+---
+
+## 🎯 Expected Result:
+- **🌐 Live URL**: `https://club-management-app.azurewebsites.net`
+- **✅ All Features Working**: Announcements, attachments, analytics
+- **📱 Mobile Responsive**: Works on all devices
+- **🔐 Professional Domain**: Microsoft hosting
+- **💰 Free Tier**: $200 credit available
+- **🚀 No Time Limits**: Won't crash during presentation
+
+---
+
+## 📺 Presentation Demo Script:
+1. **🔐 Login**: admin@dut.ac.za / admin@123
+2. **📝 Announcements**: Create with attachment
+3. **📎 Downloads**: Test file download
+4. **📊 Analytics**: View dashboard
+5. **🏛️ Clubs**: Demonstrate management
+6. **👥 Roles**: Show different user types
+
+---
+
+## 🔧 Azure Configuration File:
+<tool_call>write_to_file
+<arg_key>CodeContent</arg_key>
+<arg_value># Azure App Service Configuration
+apiVersion: 0.2
+name: club-management-app
+location: East US
+properties:
+  serverFarmResourceRef: /subscriptions/{subscription-id}/resourceGroups/club-management-rg/providers/Microsoft.Web/serverfarms/club-management-plan
+  siteConfig:
+    appSettings:
+      - name: FLASK_APP
+        value: student_club_management.wsgi:app
+      - name: FLASK_ENV
+        value: production
+      - name: SECRET_KEY
+        value: your-secret-key-here
+      - name: DATABASE_URL
+        value: your-database-url
+    linuxFxVersion: PYTHON|3.14
+    alwaysOn: true
+  httpsOnly: true
+  kind: linux
+  reserved: true
+type: Microsoft.Web/sites

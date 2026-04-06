@@ -33,7 +33,19 @@ def index():
         # This ensures they see announcements sent to "Students Only" or "All Users"
         announcements = Announcement.query.order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
     
-    return render_template('announcements/index.html', announcements=announcements)
+    # Get unread count for navbar badge
+    unread_announcements = 0
+    if announcements:
+        read_receipts = db.session.query(AnnouncementNotification.announcement_id).filter(
+            AnnouncementNotification.user_id == current_user.id
+        ).subquery()
+        unread_announcements = Announcement.query.filter(
+            ~Announcement.id.in_(select(read_receipts))
+        ).count() or 0
+    
+    return render_template('announcements/index.html', 
+                         announcements=announcements,
+                         unread_announcements=unread_announcements)
 
 @announcements_bp.route('/api/unread-count')
 @login_required
