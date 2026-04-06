@@ -39,21 +39,25 @@ def user_dashboard():
         # Get achievements (placeholder for now)
         achievements = []  # Will implement later
         
-        return render_template('dashboard/user.html', 
+        return render_template('dashboard/user_liquid.html', 
                              user=current_user,
                              memberships=user_memberships,
+                             clubs_count=clubs_count,
                              events=upcoming_events,
                              announcements=announcements,
-                             achievements=achievements)
+                             achievements=achievements,
+                             message_count=message_count)
     except Exception as e:
         print(f"❌ User dashboard error: {e}")
         # Return basic dashboard with default values if queries fail
-        return render_template('dashboard/user.html', 
+        return render_template('dashboard/user_liquid.html', 
                              user=current_user,
                              memberships=[],
+                             clubs_count=0,
                              events=[],
                              announcements=[],
-                             achievements=[])
+                             achievements=[],
+                             message_count=0)
 
 @dashboard_bp.route('/leader')
 @login_required

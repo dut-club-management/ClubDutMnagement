@@ -62,7 +62,7 @@ def index():
     now = datetime.utcnow()
     
     # Get all approved events
-    events = Event.query.filter_by(status='approved').order_by(Event.start_time.desc()).all()
+    events = Event.query.filter_by(status='approved').order_by(Event.event_date.desc()).all()
     
     return render_template('events/index.html', events=events)
 

@@ -462,7 +462,7 @@ body::before {
             <div class="stat-icon" style="background: var(--gradient-success);">
                 <i class="fas fa-calendar-check"></i>
             </div>
-            <h3 class="text-white mb-2">{{ upcoming_events|length }}</h3>
+            <h3 class="text-white mb-2">{{ events|length }}</h3>
             <p class="text-white-50 mb-0">Upcoming Events</p>
         </div>
         
@@ -470,7 +470,7 @@ body::before {
             <div class="stat-icon" style="background: var(--gradient-warning);">
                 <i class="fas fa-bullhorn"></i>
             </div>
-            <h3 class="text-white mb-2">12</h3>
+            <h3 class="text-white mb-2">{{ announcements|length }}</h3>
             <p class="text-white-50 mb-0">New Announcements</p>
         </div>
         
@@ -508,6 +508,41 @@ body::before {
         </div>
     </div>
 
+    <!-- Upcoming Events -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-calendar me-2"></i>Upcoming Events
+                    </h5>
+                    <a href="{{ url_for('events.index') }}" class="btn btn-outline-primary btn-sm">View Calendar</a>
+                </div>
+                <div class="row">
+                    {% for event in events[:4] %}
+                    <div class="col-md-6 col-lg-3 mb-3">
+                        <div class="event-card">
+                            <div class="text-center">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-calendar fa-lg"></i>
+                                </div>
+                                <h6 class="text-white mb-2">{{ event.event_name }}</h6>
+                                <p class="text-white-50 small mb-2">{{ event.event_date.strftime('%b %d, %Y') }}</p>
+                                <span class="badge bg-info">{{ event.club.club_name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-12 text-center py-3">
+                        <i class="fas fa-calendar fa-2x text-white-50 mb-2"></i>
+                        <p class="text-white-50 mb-0">No upcoming events</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Activity Feed & Stats -->
     <div class="row mt-4">
         <div class="col-md-8">
@@ -537,48 +572,31 @@ body::before {
                     </div>
                 </div>
                 
-                <div class="activity-item">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-icon" style="width: 40px; height: 40px; font-size: 16px;">
-                                <i class="fas fa-users"></i>
-                            </div>
+                <!-- Real Announcements -->
+                {% for announcement in announcements[:3] %}
+                <div class="announcement-card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="text-white mb-1">{{ announcement.title }}</h6>
+                            <small class="text-white-50">{{ announcement.content[:100] }}...</small>
                         </div>
-                        <div class="flex-grow-1">
-                            <h6 class="text-white mb-1">Joined Computer Science Club</h6>
-                            <small class="text-white-50">2 hours ago</small>
-                        </div>
-                        <div class="pulse-dot"></div>
+                        {% if announcement.priority == 'urgent' %}
+                        <span class="badge bg-danger">Urgent</span>
+                        {% endif %}
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-white-50">
+                            <i class="fas fa-user me-1"></i>{{ announcement.creator.name }} • 
+                            <i class="fas fa-clock me-1"></i>{{ announcement.created_at.strftime('%b %d') }}
+                        </small>
                     </div>
                 </div>
-                
-                <div class="activity-item">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-icon" style="width: 40px; height: 40px; font-size: 16px; background: var(--gradient-success);">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="text-white mb-1">Registered for Tech Talk</h6>
-                            <small class="text-white-50">5 hours ago</small>
-                        </div>
-                    </div>
+                {% else %}
+                <div class="text-center py-3">
+                    <i class="fas fa-bullhorn fa-2x text-white-50 mb-2"></i>
+                    <p class="text-white-50 mb-0">No new announcements</p>
                 </div>
-                
-                <div class="activity-item">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-icon" style="width: 40px; height: 40px; font-size: 16px; background: var(--gradient-info);">
-                                <i class="fas fa-bullhorn"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="text-white mb-1">New Announcement Posted</h6>
-                            <small class="text-white-50">1 day ago</small>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
         
