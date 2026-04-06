@@ -20,18 +20,14 @@ def user_dashboard():
         user_memberships = Membership.query.filter_by(user_id=current_user.id).all()
         clubs_count = len(user_memberships)
         
-        # Get upcoming events from user's clubs
-        user_club_ids = [m.club_id for m in user_memberships]
+        # Get all upcoming events (like calendar shows all events)
         upcoming_events = Event.query.filter(
-            Event.club_id.in_(user_club_ids),
             Event.status == 'approved',
             Event.event_date >= datetime.now()
         ).order_by(Event.event_date).limit(4).all()
         
-        # Get announcements from user's clubs
-        announcements = Announcement.query.filter(
-            Announcement.club_id.in_(user_club_ids)
-        ).order_by(Announcement.created_at.desc()).limit(3).all()
+        # Get all announcements (not just from student's clubs)
+        announcements = Announcement.query.filter_by(status='approved').order_by(Announcement.created_at.desc()).limit(3).all()
         
         # Get real message count (placeholder for now - will implement chat system later)
         message_count = 0  # TODO: Implement actual message counting when chat system is ready
