@@ -240,7 +240,10 @@ def quick_stats():
     """Get quick statistics for dashboard"""
     try:
         stats = {}
+<<<<<<< HEAD
         
+=======
+>>>>>>> facee2bbc8c937e4a4e8f34e81f9b2f137811b30
         if current_user.role == 'admin':
             stats['users'] = User.query.count()
             stats['clubs'] = Club.query.count()
@@ -262,3 +265,8 @@ def quick_stats():
     except Exception as e:
         print(f"❌ Quick stats error: {e}")
         return jsonify({'error': str(e)}), 500
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> facee2bbc8c937e4a4e8f34e81f9b2f137811b30
