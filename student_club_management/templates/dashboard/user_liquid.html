@@ -488,23 +488,31 @@ body::before {
         <h3 class="text-white mb-4 fs-4">
             <i class="fas fa-bolt me-2"></i>Quick Actions
         </h3>
-        <div class="quick-actions-grid">
-            <a href="/announcements" class="liquid-button btn-lg">
-                <i class="fas fa-bullhorn me-2"></i>
-                View Announcements
-            </a>
-            <a href="/clubs" class="liquid-button btn-lg">
-                <i class="fas fa-users me-2"></i>
-                Browse Clubs
-            </a>
-            <a href="/events" class="liquid-button btn-lg">
-                <i class="fas fa-calendar me-2"></i>
-                View Events
-            </a>
-            <a href="/chat" class="liquid-button btn-lg">
-                <i class="fas fa-comments me-2"></i>
-                Chat Room
-            </a>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <a href="/announcements" class="liquid-button btn-lg d-block h-100 p-3">
+                    <i class="fas fa-bullhorn fa-2x mb-2 d-block"></i>
+                    <span>View Announcements</span>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="/clubs" class="liquid-button btn-lg d-block h-100 p-3">
+                    <i class="fas fa-users fa-2x mb-2 d-block"></i>
+                    <span>Browse Clubs</span>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="/events/calendar" class="liquid-button btn-lg d-block h-100 p-3">
+                    <i class="fas fa-calendar fa-2x mb-2 d-block"></i>
+                    <span>Events Calendar</span>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="/chat" class="liquid-button btn-lg d-block h-100 p-3">
+                    <i class="fas fa-comments fa-2x mb-2 d-block"></i>
+                    <span>Chat Room</span>
+                </a>
+            </div>
         </div>
     </div>
 
