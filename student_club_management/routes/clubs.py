@@ -12,6 +12,11 @@ from sqlalchemy import or_, and_
 clubs_bp = Blueprint('clubs', __name__, url_prefix='/clubs')
 
 @clubs_bp.route('/')
+def index():
+    """Main clubs listing page - alias for list_clubs"""
+    return list_clubs()
+
+@clubs_bp.route('/list')
 def list_clubs():
     try:
         # Show all active clubs

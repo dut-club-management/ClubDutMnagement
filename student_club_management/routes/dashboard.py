@@ -25,8 +25,8 @@ def user_dashboard():
         upcoming_events = Event.query.filter(
             Event.club_id.in_(user_club_ids),
             Event.status == 'approved',
-            Event.start_time >= datetime.now()
-        ).order_by(Event.start_time).limit(4).all()
+            Event.event_date >= datetime.now()
+        ).order_by(Event.event_date).limit(4).all()
         
         # Get announcements from user's clubs
         announcements = Announcement.query.filter(
