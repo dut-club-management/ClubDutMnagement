@@ -304,9 +304,11 @@ def api_send_reminders():
         'events_processed': events_count,
         'meetings_processed': meetings_count,
         'message': f'Sent reminders for {events_count} events and {meetings_count} meetings'
-    })  @notifications_bp.route('/mark-all-read', methods=['POST'])
+    })
+
+@notifications_bp.route('/mark-all-read', methods=['POST'])
 @login_required
-def mark_all_read():
+def mark_all_notifications_read():
     """Mark all notifications as read"""
     try:
         # Update all unread notifications
@@ -355,33 +357,6 @@ def recent_notifications():
     except Exception as e:
         print(f"❌ Recent notifications error: {e}")
         return jsonify({'error': str(e)}), 500
-
-
-@notifications_bp.route('/mark-all-read', methods=['POST'])
-@login_required
-def mark_all_read():
-    """Mark all notifications as read"""
-    try:
-        # Update all unread notifications
-        unread_notifications = Notification.query.filter_by(
-            user_id=current_user.id, 
-            is_read=False
-        ).all()
-        
-        for notification in unread_notifications:
-            notification.is_read = True
-            notification.read_at = datetime.now()
-        
-        db.session.commit()
-        
-        return jsonify({
-            'success': True,
-            'message': 'All notifications marked as read',
-            'count': 0
-        })
-    except Exception as e:
-        print(f"❌ Mark all read error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
 
 @notifications_bp.route('/api/recent')
 @login_required
