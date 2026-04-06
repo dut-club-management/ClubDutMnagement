@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Welcome Section -->
+        <div class="col-12">
+            <div class="card bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">Welcome back, {{ current_user.name }}! 👋</h2>
+                            <p class="mb-0">{{ current_user.email }} • Student • {{ current_user.student_id or 'ID: Not Set' }}</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="badge bg-white text-dark p-2">
+                                <i class="fas fa-calendar me-1"></i>
+                                April 6, 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm hover-lift">
+                <div class="card-body text-center">
+                    <div class="text-primary mb-2">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <h3 class="font-weight-bold">{{ clubs_count }}</h3>
+                    <p class="text-muted mb-0">My Clubs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm hover-lift">
+                <div class="card-body text-center">
+                    <div class="text-success mb-2">
+                        <i class="fas fa-calendar-check fa-2x"></i>
+                    </div>
+                    <h3 class="font-weight-bold">{{ upcoming_events|length }}</h3>
+                    <p class="text-muted mb-0">Upcoming Events</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm hover-lift">
+                <div class="card-body text-center">
+                    <div class="text-info mb-2">
+                        <i class="fas fa-bullhorn fa-2x"></i>
+                    </div>
+                    <h3 class="font-weight-bold">12</h3>
+                    <p class="text-muted mb-0">New Announcements</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm hover-lift">
+                <div class="card-body text-center">
+                    <div class="text-warning mb-2">
+                        <i class="fas fa-tasks fa-2x"></i>
+                    </div>
+                    <h3 class="font-weight-bold">5</h3>
+                    <p class="text-muted mb-0">Pending Tasks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="/announcements" class="btn btn-outline-primary btn-lg w-100 hover-scale">
+                                <i class="fas fa-bullhorn me-2"></i>View Announcements
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/clubs" class="btn btn-outline-success btn-lg w-100 hover-scale">
+                                <i class="fas fa-users me-2"></i>Browse Clubs
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/events" class="btn btn-outline-info btn-lg w-100 hover-scale">
+                                <i class="fas fa-calendar me-2"></i>View Events
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/chat" class="btn btn-outline-warning btn-lg w-100 hover-scale">
+                                <i class="fas fa-comments me-2"></i>Chat Room
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="fas fa-clock me-2"></i>Recent Activity
+                    </h5>
+                    <div class="activity-feed">
+                        <div class="activity-item mb-3 p-3 border rounded">
+                            <div class="d-flex align-items-center">
+                                <div class="activity-icon bg-primary text-white rounded-circle p-2 me-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6 class="mb-1">Joined Computer Science Club</h6>
+                                    <small class="text-muted">2 hours ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item mb-3 p-3 border rounded">
+                            <div class="d-flex align-items-center">
+                                <div class="activity-icon bg-success text-white rounded-circle p-2 me-3">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6 class="mb-1">Registered for Tech Talk</h6>
+                                    <small class="text-muted">5 hours ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item mb-3 p-3 border rounded">
+                            <div class="d-flex align-items-center">
+                                <div class="activity-icon bg-info text-white rounded-circle p-2 me-3">
+                                    <i class="fas fa-bullhorn"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6 class="mb-1">New Announcement Posted</h6>
+                                    <small class="text-muted">1 day ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="fas fa-chart-line me-2"></i>Quick Stats
+                    </h5>
+                    <div class="stats-list">
+                        <div class="stat-item d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                            <span><i class="fas fa-eye me-2"></i>Profile Views</span>
+                            <span class="badge bg-primary">47</span>
+                        </div>
+                        <div class="stat-item d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                            <span><i class="fas fa-envelope me-2"></i>Messages</span>
+                            <span class="badge bg-success">12</span>
+                        </div>
+                        <div class="stat-item d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                            <span><i class="fas fa-bell me-2"></i>Notifications</span>
+                            <span class="badge bg-warning">3</span>
+                        </div>
+                        <div class="stat-item d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                            <span><i class="fas fa-trophy me-2"></i>Achievements</span>
+                            <span class="badge bg-info">8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-lift {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.hover-scale {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.activity-feed {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    transition: background-color 0.2s ease-in-out;
+}
+
+.activity-item:hover {
+    background-color: #f8f9fa;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.font-weight-bold {
+    font-weight: 700;
+}
+
+.stats-list .stat-item {
+    transition: background-color 0.2s ease-in-out;
+}
+
+.stats-list .stat-item:hover {
+    background-color: #e9ecef !important;
+}
+</style>
+{% endblock %}

@@ -21,7 +21,7 @@ def user_dashboard():
         upcoming_events = Event.query.filter(Event.status == 'approved').all()
         user_memberships = Membership.query.filter_by(user_id=current_user.id).all()
         
-        return render_template('dashboard/user_simple.html', 
+        return render_template('dashboard/user_enhanced.html', 
                              user=current_user,
                              clubs_count=user_clubs,
                              upcoming_events=upcoming_events,
@@ -29,7 +29,7 @@ def user_dashboard():
     except Exception as e:
         print(f"❌ User dashboard error: {e}")
         # Return basic dashboard with default values if queries fail
-        return render_template('dashboard/user_simple.html', 
+        return render_template('dashboard/user_enhanced.html', 
                              user=current_user,
                              clubs_count=0,
                              upcoming_events=[],
