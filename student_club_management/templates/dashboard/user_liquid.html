@@ -71,6 +71,46 @@ body::before {
     overflow: hidden;
 }
 
+/* Special pulsing glass element for student dashboard */
+.pulsing-glass-element {
+    background: linear-gradient(
+        50deg,
+        rgba(255, 255, 255, 0.4) 12%,
+        rgba(255, 255, 255, 0.1) 77%
+    );
+    background-blend-mode: overlay;
+    transform: translate(0px, 0px);
+    box-shadow: 0px 4px 24px 1px rgba(0, 0, 0, 0.28);
+    animation: pulsingShadow 1843ms infinite ease-out;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+}
+
+@keyframes pulsingShadow {
+    from {
+        box-shadow: 0px 4px 24px 1px rgba(0, 0, 0, 0.28);
+    }
+    to {
+        box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Enhanced glass card with pulsing effect */
+.glass-card-pulsing {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0px 4px 24px 1px rgba(0, 0, 0, 0.28);
+    animation: pulsingShadow 1843ms infinite ease-out;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
 .glass-card::before {
     content: '';
     position: absolute;
@@ -361,7 +401,7 @@ body::before {
 
 <div class="container mt-4">
     <!-- Welcome Banner -->
-    <div class="welcome-banner glass-card">
+    <div class="welcome-banner glass-card-pulsing">
         <div class="row align-items-center position-relative">
             <div class="col-md-8">
                 <h1 class="mb-3 text-white">
@@ -371,7 +411,7 @@ body::before {
                     <i class="fas fa-envelope me-2"></i>{{ current_user.email }}
                 </p>
                 <p class="mb-0 text-white">
-                    <span class="badge glass-card px-3 py-2">
+                    <span class="badge pulsing-glass-element px-3 py-2">
                         <i class="fas fa-user-graduate me-2"></i>Student
                         <span class="pulse-dot ms-2"></span>
                     </span>
@@ -381,7 +421,7 @@ body::before {
                 </p>
             </div>
             <div class="col-md-4 text-end">
-                <div class="glass-card p-3 d-inline-block">
+                <div class="pulsing-glass-element p-3 d-inline-block">
                     <div class="text-white">
                         <i class="fas fa-calendar-alt fa-2x mb-2"></i>
                         <p class="mb-0 fw-bold">April 6, 2026</p>
@@ -394,6 +434,22 @@ body::before {
 
     <!-- Stats Grid -->
     <div class="stats-grid">
+        <!-- Special Student Status Element -->
+        <div class="pulsing-glass-element p-4 mb-4">
+            <div class="text-center">
+                <div class="stat-icon mb-3" style="background: var(--gradient-primary); width: 80px; height: 80px; font-size: 32px;">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h4 class="text-white mb-2">Student Status</h4>
+                <p class="text-white-50 mb-0">Active Member</p>
+                <div class="mt-2">
+                    <span class="badge glass-card px-2 py-1">
+                        <i class="fas fa-check-circle me-1"></i>Verified
+                    </span>
+                </div>
+            </div>
+        </div>
+        
         <div class="stat-card">
             <div class="stat-icon" style="background: var(--gradient-primary);">
                 <i class="fas fa-users"></i>
@@ -459,6 +515,27 @@ body::before {
                 <h3 class="text-white mb-4">
                     <i class="fas fa-clock me-2"></i>Recent Activity
                 </h3>
+                
+                <!-- Special Student Achievement Element -->
+                <div class="pulsing-glass-element p-3 mb-4">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="stat-icon" style="background: var(--gradient-warning); width: 50px; height: 50px; font-size: 20px;">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-white mb-1">Student Achievement Unlocked! 🎉</h6>
+                            <p class="text-white-50 mb-0">Active Club Member - 30 days streak</p>
+                            <div class="mt-2">
+                                <span class="badge glass-card px-2 py-1">
+                                    <i class="fas fa-star me-1"></i>Level 2
+                                </span>
+                            </div>
+                        </div>
+                        <div class="pulse-dot"></div>
+                    </div>
+                </div>
                 
                 <div class="activity-item">
                     <div class="d-flex align-items-center">
