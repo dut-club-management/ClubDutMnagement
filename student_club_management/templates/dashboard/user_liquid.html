@@ -434,52 +434,54 @@ body::before {
 
     <!-- Stats Grid -->
     <div class="stats-grid">
-        <!-- Special Student Status Element -->
-        <div class="pulsing-glass-element p-4 mb-4">
-            <div class="text-center">
-                <div class="stat-icon mb-3" style="background: var(--gradient-primary); width: 80px; height: 80px; font-size: 32px;">
-                    <i class="fas fa-user-graduate"></i>
+        <div class="row g-4">
+            <!-- Special Student Status Element -->
+            <div class="col-12">
+                <div class="pulsing-glass-element p-4">
+                    <div class="text-center">
+                        <div class="stat-icon mb-3" style="background: var(--gradient-primary); width: 80px; height: 80px; font-size: 32px;">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h4 class="text-white mb-2">Student Status</h4>
+                        <p class="text-white-50 mb-0">Active Member</p>
+                        <div class="mt-2">
+                            <span class="badge glass-card px-2 py-1">
+                                <i class="fas fa-check-circle me-1"></i>Verified
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <h4 class="text-white mb-2">Student Status</h4>
-                <p class="text-white-50 mb-0">Active Member</p>
-                <div class="mt-2">
-                    <span class="badge glass-card px-2 py-1">
-                        <i class="fas fa-check-circle me-1"></i>Verified
-                    </span>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: var(--gradient-primary);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-white mb-2">{{ clubs_count }}</h3>
+                    <p class="text-white-50 mb-0">My Clubs</p>
                 </div>
             </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon" style="background: var(--gradient-primary);">
-                <i class="fas fa-users"></i>
+            
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: var(--gradient-success);">
+                        <i class="fas fa-calendar-check fa-lg"></i>
+                    </div>
+                    <h3 class="text-white mb-2 display-6">{{ events|length }}</h3>
+                    <p class="text-white-50 mb-0 fs-6">Upcoming Events</p>
+                </div>
             </div>
-            <h3 class="text-white mb-2">{{ clubs_count }}</h3>
-            <p class="text-white-50 mb-0">My Clubs</p>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon" style="background: var(--gradient-success);">
-                <i class="fas fa-calendar-check fa-lg"></i>
+            
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: var(--gradient-warning);">
+                        <i class="fas fa-bullhorn fa-lg"></i>
+                    </div>
+                    <h3 class="text-white mb-2 display-6">{{ announcements|length }}</h3>
+                    <p class="text-white-50 mb-0 fs-6">New Announcements</p>
+                </div>
             </div>
-            <h3 class="text-white mb-2 display-6">{{ events|length }}</h3>
-            <p class="text-white-50 mb-0 fs-6">Upcoming Events</p>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon" style="background: var(--gradient-warning);">
-                <i class="fas fa-bullhorn fa-lg"></i>
-            </div>
-            <h3 class="text-white mb-2 display-6">{{ announcements|length }}</h3>
-            <p class="text-white-50 mb-0 fs-6">New Announcements</p>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon" style="background: var(--gradient-danger);">
-                <i class="fas fa-tasks fa-lg"></i>
-            </div>
-            <h3 class="text-white mb-2 display-6">{{ message_count }}</h3>
-            <p class="text-white-50 mb-0 fs-6">Messages</p>
         </div>
     </div>
 
