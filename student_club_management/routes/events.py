@@ -54,6 +54,19 @@ def check_event_conflicts(event_date, end_date, location, event_id=None, club_id
     return all_conflicts
 
 
+@events_bp.route('/')
+@login_required
+def index():
+    """Main events listing page"""
+    from app import db
+    now = datetime.utcnow()
+    
+    # Get all approved events
+    events = Event.query.filter_by(status='approved').order_by(Event.start_time.desc()).all()
+    
+    return render_template('events/index.html', events=events)
+
+
 @events_bp.route('/calendar')
 @login_required
 def calendar():

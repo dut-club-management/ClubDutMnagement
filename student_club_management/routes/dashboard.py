@@ -16,24 +16,44 @@ dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 @login_required
 def user_dashboard():
     try:
-        user_clubs = Membership.query.filter_by(user_id=current_user.id).count()
-        # Show approved events from clubs user is member of
-        upcoming_events = Event.query.filter(Event.status == 'approved').all()
+        # Get user's memberships and clubs
         user_memberships = Membership.query.filter_by(user_id=current_user.id).all()
+        clubs_count = len(user_memberships)
         
-        return render_template('dashboard/user_optimized.html', 
+        # Get upcoming events from user's clubs
+        user_club_ids = [m.club_id for m in user_memberships]
+        upcoming_events = Event.query.filter(
+            Event.club_id.in_(user_club_ids),
+            Event.status == 'approved',
+            Event.start_time >= datetime.now()
+        ).order_by(Event.start_time).limit(4).all()
+        
+        # Get announcements from user's clubs
+        announcements = Announcement.query.filter(
+            Announcement.club_id.in_(user_club_ids)
+        ).order_by(Announcement.created_at.desc()).limit(3).all()
+        
+        # Get real message count (placeholder for now - will implement chat system later)
+        message_count = 0  # TODO: Implement actual message counting when chat system is ready
+        
+        # Get achievements (placeholder for now)
+        achievements = []  # Will implement later
+        
+        return render_template('dashboard/user.html', 
                              user=current_user,
-                             clubs_count=user_clubs,
-                             upcoming_events=upcoming_events,
-                             memberships=user_memberships)
+                             memberships=user_memberships,
+                             events=upcoming_events,
+                             announcements=announcements,
+                             achievements=achievements)
     except Exception as e:
         print(f"❌ User dashboard error: {e}")
         # Return basic dashboard with default values if queries fail
-        return render_template('dashboard/user_optimized.html', 
+        return render_template('dashboard/user.html', 
                              user=current_user,
-                             clubs_count=0,
-                             upcoming_events=[],
-                             memberships=[])
+                             memberships=[],
+                             events=[],
+                             announcements=[],
+                             achievements=[])
 
 @dashboard_bp.route('/leader')
 @login_required
