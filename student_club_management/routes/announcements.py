@@ -18,7 +18,7 @@ announcements_bp = Blueprint('announcements', __name__, url_prefix='/announcemen
 @announcements_bp.route('/')
 @login_required
 def index():
-    """Show all announcements for current user based on their club memberships"""
+    """Show all announcements for current user based on their role"""
     if current_user.role == 'admin':
         announcements = Announcement.query.order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
     elif current_user.role == 'leader':
@@ -29,11 +29,9 @@ def index():
             Announcement.pinned.desc(), Announcement.created_at.desc()
         ).all()
     else:
-        memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
-        club_ids = [m.club_id for m in memberships]
-        announcements = Announcement.query.filter(Announcement.club_id.in_(club_ids)).order_by(
-            Announcement.pinned.desc(), Announcement.created_at.desc()
-        ).all()
+        # Students: Show all announcements (not just from their clubs)
+        # This ensures they see announcements sent to "Students Only" or "All Users"
+        announcements = Announcement.query.order_by(Announcement.pinned.desc(), Announcement.created_at.desc()).all()
     
     return render_template('announcements/index.html', announcements=announcements)
 
@@ -43,26 +41,23 @@ def unread_count():
     """Get count of unread announcements for real-time badge updates"""
     try:
         if current_user.role == 'admin':
-            club_ids = [c.id for c in Club.query.all()]
+            announcements_query = Announcement.query
         elif current_user.role == 'leader':
             # Show all active clubs for any leader
             active_clubs = Club.query.filter(Club.status == 'active').all()
             club_ids = [c.id for c in active_clubs]
+            announcements_query = Announcement.query.filter(Announcement.club_id.in_(club_ids))
         else:
-            memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
-            club_ids = [m.club_id for m in memberships]
-        
-        if not club_ids:
-            return jsonify({'count': 0})
+            # Students: Show all announcements (not just from their clubs)
+            announcements_query = Announcement.query
         
         read_receipts = db.session.query(AnnouncementNotification.announcement_id).filter(
             AnnouncementNotification.user_id == current_user.id
         ).subquery()
         
-        unread_count = db.session.query(func.count(Announcement.id)).filter(
-            Announcement.club_id.in_(club_ids),
+        unread_count = announcements_query.filter(
             ~Announcement.id.in_(select(read_receipts))
-        ).scalar() or 0
+        ).count() or 0
         
         return jsonify({'count': unread_count})
     except Exception as e:
@@ -515,18 +510,18 @@ def mark_read(announcement_id):
 @login_required
 def mark_all_read():
     """Mark all announcements as read for current user"""
-    if current_user.role == 'admin':
-        club_ids = [c.id for c in Club.query.all()]
-    elif current_user.role == 'leader':
-        # Show all active clubs for any leader (consistent with other functions)
-        active_clubs = Club.query.filter(Club.status == 'active').all()
-        club_ids = [c.id for c in active_clubs]
-    else:
-        memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
-        club_ids = [m.club_id for m in memberships]
-    
-    if club_ids:
-        announcements = Announcement.query.filter(Announcement.club_id.in_(club_ids)).all()
+    try:
+        if current_user.role == 'admin':
+            announcements = Announcement.query.all()
+        elif current_user.role == 'leader':
+            # Show all active clubs for any leader (consistent with other functions)
+            active_clubs = Club.query.filter(Club.status == 'active').all()
+            club_ids = [c.id for c in active_clubs]
+            announcements = Announcement.query.filter(Announcement.club_id.in_(club_ids)).all()
+        else:
+            # Students: Mark all announcements as read (not just from their clubs)
+            announcements = Announcement.query.all()
+        
         announcement_ids = [a.id for a in announcements]
         notifications = AnnouncementNotification.query.filter(
             AnnouncementNotification.user_id == current_user.id,
@@ -535,8 +530,11 @@ def mark_all_read():
         for notification in notifications:
             notification.is_read = True
         db.session.commit()
-    
-    return jsonify({'success': True})
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        print(f"❌ Mark all read error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 # API: Delete comment
 @announcements_bp.route('/api/comment/<int:comment_id>', methods=['DELETE'])
