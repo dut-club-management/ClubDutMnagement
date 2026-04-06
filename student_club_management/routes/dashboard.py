@@ -26,8 +26,8 @@ def user_dashboard():
             Event.event_date >= datetime.now()
         ).order_by(Event.event_date).limit(4).all()
         
-        # Get all announcements (not just from student's clubs)
-        announcements = Announcement.query.filter_by(status='approved').order_by(Announcement.created_at.desc()).limit(3).all()
+        # Get all announcements (no status field in Announcement model)
+        announcements = Announcement.query.order_by(Announcement.created_at.desc()).limit(3).all()
         
         # Get real message count (placeholder for now - will implement chat system later)
         message_count = 0  # TODO: Implement actual message counting when chat system is ready
