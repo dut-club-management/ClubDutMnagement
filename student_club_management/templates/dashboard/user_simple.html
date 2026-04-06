@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Welcome Section -->
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h2 class="mb-2">Welcome back, {{ current_user.name }}! 👋</h2>
+                    <p class="mb-0">{{ current_user.email }} • Student • {{ current_user.student_id or 'ID: Not Set' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-primary">{{ clubs_count }}</h3>
+                    <p class="mb-0">My Clubs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-success">{{ upcoming_events|length }}</h3>
+                    <p class="mb-0">Upcoming Events</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-info">{{ memberships|length }}</h3>
+                    <p class="mb-0">Memberships</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-warning">2026-04-06</h3>
+                    <p class="mb-0">Today's Date</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="/announcements" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-bullhorn me-2"></i>View Announcements
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="/clubs" class="btn btn-outline-success w-100">
+                                <i class="fas fa-users me-2"></i>Browse Clubs
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="/events" class="btn btn-outline-info w-100">
+                                <i class="fas fa-calendar me-2"></i>View Events
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="/chat" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-comments me-2"></i>Chat Room
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
