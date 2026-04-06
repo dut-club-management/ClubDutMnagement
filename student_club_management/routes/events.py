@@ -87,7 +87,7 @@ def calendar():
         db.session.commit()
     
     # Get all approved/ongoing events (not completed ones) for calendar display
-    # Also include upcoming events that haven't started yet
+    # Show same events for all users (student, leader, admin)
     events = Event.query.filter(Event.status.in_(['approved', 'ongoing'])).all()
     
     # Format for FullCalendar

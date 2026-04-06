@@ -403,29 +403,29 @@ body::before {
     <!-- Welcome Banner -->
     <div class="welcome-banner glass-card-pulsing">
         <div class="row align-items-center position-relative">
-            <div class="col-md-8">
-                <h1 class="mb-3 text-white">
+            <div class="col-lg-8">
+                <h1 class="mb-3 text-white display-5">
                     Welcome back, <span class="gradient-text">{{ current_user.name }}</span>! 👋
                 </h1>
                 <p class="mb-2 text-white fs-5">
                     <i class="fas fa-envelope me-2"></i>{{ current_user.email }}
                 </p>
-                <p class="mb-0 text-white">
-                    <span class="badge pulsing-glass-element px-3 py-2">
+                <div class="mb-0 text-white">
+                    <span class="badge pulsing-glass-element px-3 py-2 me-2" style="font-size: 0.9rem;">
                         <i class="fas fa-user-graduate me-2"></i>Student
                         <span class="pulse-dot ms-2"></span>
                     </span>
-                    <span class="badge glass-card px-3 py-2 ms-2">
+                    <span class="badge glass-card px-3 py-2" style="font-size: 0.9rem;">
                         <i class="fas fa-id-card me-2"></i>{{ current_user.student_id or 'ID: Not Set' }}
                     </span>
-                </p>
+                </div>
             </div>
-            <div class="col-md-4 text-end">
-                <div class="pulsing-glass-element p-3 d-inline-block">
-                    <div class="text-white">
-                        <i class="fas fa-calendar-alt fa-2x mb-2"></i>
-                        <p class="mb-0 fw-bold">April 6, 2026</p>
-                        <small>Today</small>
+            <div class="col-lg-4 text-end">
+                <div class="pulsing-glass-element p-4 d-inline-block">
+                    <div class="text-white text-center">
+                        <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                        <p class="mb-0 fw-bold fs-5">{{ "now"|strftime("%B %d, %Y") }}</p>
+                        <small class="fs-6">Today</small>
                     </div>
                 </div>
             </div>
@@ -460,48 +460,48 @@ body::before {
         
         <div class="stat-card">
             <div class="stat-icon" style="background: var(--gradient-success);">
-                <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-calendar-check fa-lg"></i>
             </div>
-            <h3 class="text-white mb-2">{{ events|length }}</h3>
-            <p class="text-white-50 mb-0">Upcoming Events</p>
+            <h3 class="text-white mb-2 display-6">{{ events|length }}</h3>
+            <p class="text-white-50 mb-0 fs-6">Upcoming Events</p>
         </div>
         
         <div class="stat-card">
             <div class="stat-icon" style="background: var(--gradient-warning);">
-                <i class="fas fa-bullhorn"></i>
+                <i class="fas fa-bullhorn fa-lg"></i>
             </div>
-            <h3 class="text-white mb-2">{{ announcements|length }}</h3>
-            <p class="text-white-50 mb-0">New Announcements</p>
+            <h3 class="text-white mb-2 display-6">{{ announcements|length }}</h3>
+            <p class="text-white-50 mb-0 fs-6">New Announcements</p>
         </div>
         
         <div class="stat-card">
             <div class="stat-icon" style="background: var(--gradient-danger);">
-                <i class="fas fa-tasks"></i>
+                <i class="fas fa-tasks fa-lg"></i>
             </div>
-            <h3 class="text-white mb-2">5</h3>
-            <p class="text-white-50 mb-0">Pending Tasks</p>
+            <h3 class="text-white mb-2 display-6">{{ message_count }}</h3>
+            <p class="text-white-50 mb-0 fs-6">Messages</p>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="glass-card p-4">
-        <h3 class="text-white mb-4">
+    <div class="glass-card p-4 mb-4">
+        <h3 class="text-white mb-4 fs-4">
             <i class="fas fa-bolt me-2"></i>Quick Actions
         </h3>
         <div class="quick-actions-grid">
-            <a href="/announcements" class="liquid-button">
+            <a href="/announcements" class="liquid-button btn-lg">
                 <i class="fas fa-bullhorn me-2"></i>
                 View Announcements
             </a>
-            <a href="/clubs" class="liquid-button">
+            <a href="/clubs" class="liquid-button btn-lg">
                 <i class="fas fa-users me-2"></i>
                 Browse Clubs
             </a>
-            <a href="/events" class="liquid-button">
+            <a href="/events" class="liquid-button btn-lg">
                 <i class="fas fa-calendar me-2"></i>
                 View Events
             </a>
-            <a href="/chat" class="liquid-button">
+            <a href="/chat" class="liquid-button btn-lg">
                 <i class="fas fa-comments me-2"></i>
                 Chat Room
             </a>
