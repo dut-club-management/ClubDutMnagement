@@ -17,7 +17,7 @@
                         <div class="col-md-4 text-end">
                             <div class="badge bg-white text-dark p-2">
                                 <i class="fas fa-calendar me-1"></i>
-                                {{ moment().format('MMMM Do, YYYY') }}
+                                {{ moment().format('MMMM Do, YYYY') if moment else '2026-04-06' }}
                             </div>
                         </div>
                     </div>
