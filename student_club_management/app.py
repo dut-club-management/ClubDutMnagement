@@ -51,6 +51,15 @@ def create_app(config_name='development'):
     migrate.init_app(app, db)
     csrf.init_app(app)
     
+    # Static file serving
+    if config_name == 'development':
+        # Development - use local static folder
+        pass
+    else:
+        # Production - ensure static files are served correctly
+        app.config['STATIC_FOLDER'] = 'static'
+        app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+    
     # Login manager configuration
     login_manager.login_view = 'auth.login'
     login_manager.login_message_category = 'info'
