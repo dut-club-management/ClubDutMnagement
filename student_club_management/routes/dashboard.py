@@ -35,35 +35,41 @@ def user_dashboard():
         # Get achievements (placeholder for now)
         achievements = []  # Will implement later
         
-        # Debug information
-        print(f"🔍 Dashboard Debug:")
-        print(f"  User ID: {current_user.id}")
-        print(f"  User Email: {current_user.email}")
-        print(f"  Active Memberships: {len(user_memberships)}")
-        print(f"  Upcoming Events: {len(upcoming_events)}")
-        print(f"  Announcements: {len(announcements)}")
+        # Debug information - print to console for troubleshooting
+        print(f"🔍 Dashboard Debug - User ID: {current_user.id}")
+        print(f"🔍 Dashboard Debug - User Email: {current_user.email}")
+        print(f"🔍 Dashboard Debug - Active Memberships: {len(user_memberships)}")
+        print(f"🔍 Dashboard Debug - Clubs Count: {clubs_count}")
+        print(f"🔍 Dashboard Debug - Upcoming Events: {len(upcoming_events)}")
+        print(f"🔍 Dashboard Debug - Announcements: {len(announcements)}")
         
-        return render_template('dashboard/user_admin_exact.html', 
-                             user=current_user,
-                             memberships=user_memberships,
-                             clubs_count=clubs_count,
-                             events=upcoming_events,
-                             announcements=announcements,
-                             achievements=achievements,
-                             message_count=message_count,
-                             current_date=datetime.now().strftime('%B %d, %Y'))
+        # Force template context to ensure data is passed
+        template_context = {
+            'user': current_user,
+            'memberships': user_memberships,
+            'clubs_count': clubs_count,
+            'events': upcoming_events,
+            'announcements': announcements,
+            'achievements': achievements,
+            'message_count': message_count,
+            'current_date': datetime.now().strftime('%B %d, %Y')
+        }
+        
+        return render_template('dashboard/user_admin_exact.html', **template_context)
     except Exception as e:
         print(f"❌ User dashboard error: {e}")
         # Return basic dashboard with default values if queries fail
-        return render_template('dashboard/user_admin_exact.html', 
-                             user=current_user,
-                             memberships=[],
-                             clubs_count=0,
-                             events=[],
-                             announcements=[],
-                             achievements=[],
-                             message_count=0,
-                             current_date=datetime.now().strftime('%B %d, %Y'))
+        template_context = {
+            'user': current_user,
+            'memberships': [],
+            'clubs_count': 0,
+            'events': [],
+            'announcements': [],
+            'achievements': [],
+            'message_count': 0,
+            'current_date': datetime.now().strftime('%B %d, %Y')
+        }
+        return render_template('dashboard/user_admin_exact.html', **template_context)
 
 @dashboard_bp.route('/leader')
 @login_required
