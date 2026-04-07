@@ -35,7 +35,7 @@ def user_dashboard():
         # Get achievements (placeholder for now)
         achievements = []  # Will implement later
         
-        return render_template('dashboard/user_glass_liquid.html', 
+        return render_template('dashboard/user_admin_exact.html', 
                              user=current_user,
                              memberships=user_memberships,
                              clubs_count=clubs_count,
@@ -47,7 +47,7 @@ def user_dashboard():
     except Exception as e:
         print(f"❌ User dashboard error: {e}")
         # Return basic dashboard with default values if queries fail
-        return render_template('dashboard/user_glass_liquid.html', 
+        return render_template('dashboard/user_admin_exact.html', 
                              user=current_user,
                              memberships=[],
                              clubs_count=0,
