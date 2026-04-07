@@ -17,14 +17,14 @@ dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 def user_dashboard():
     try:
         # Get user's memberships and clubs
-        user_memberships = Membership.query.filter_by(user_id=current_user.id).all()
+        user_memberships = Membership.query.filter_by(user_id=current_user.id, status='active').all()
         clubs_count = len(user_memberships)
         
         # Get all upcoming events (like calendar shows all events)
         upcoming_events = Event.query.filter(
             Event.status == 'approved',
             Event.event_date >= datetime.now()
-        ).order_by(Event.event_date).limit(4).all()
+        ).order_by(Event.event_date).limit(6).all()
         
         # Get all announcements (no status field in Announcement model)
         announcements = Announcement.query.order_by(Announcement.created_at.desc()).limit(3).all()
@@ -34,6 +34,8 @@ def user_dashboard():
         
         # Get achievements (placeholder for now)
         achievements = []  # Will implement later
+        
+        print(f"🔍 Dashboard Debug: clubs_count={clubs_count}, events_count={len(upcoming_events)}, announcements_count={len(announcements)}")
         
         return render_template('dashboard/user_admin_exact.html', 
                              user=current_user,
